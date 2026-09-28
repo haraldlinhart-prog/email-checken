@@ -178,7 +178,7 @@ function calculateScore(results: CheckResult[]): number {
 // Rot: Blacklist-Eintrag ODER SPF+DMARC beide fail (score < 40)
 // Gelb: score 40-69 ODER unwichtige Checks (dkim/mtasts/tlsrpt) schlagen fehl
 // Grün: score >= 70 UND kein Blacklist-fail
-export function badgeColor(results: CheckResult[], score: number): 'green' | 'yellow' | 'red' {
+function badgeColor(results: CheckResult[], score: number): 'green' | 'yellow' | 'red' {
   const get = (id: string) => results.find(r => r.id === id)
   const blacklistFail = get('blacklist')?.status === 'fail'
   const spfFail = get('spf')?.status === 'fail'

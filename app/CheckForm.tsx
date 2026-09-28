@@ -33,6 +33,7 @@ export default function CheckForm() {
   const [loadingResults, setLoadingResults] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
+  const [badgeBust, setBadgeBust] = useState('')
   const codeRef = useRef<HTMLElement>(null)
 
   function copyEmbedCode(code: string) {
@@ -46,6 +47,10 @@ export default function CheckForm() {
     if (!data) return
     setLoadingResults(true)
     try {
+      // Re-run check so Supabase has fresh badge_color, then fetch results
+      await fetch(`/api/check?domain=${encodeURIComponent(data.domain)}`)
+      // Bust badge image cache
+      setBadgeBust(`?t=${Date.now()}`)
       const res = await fetch(`/api/results?domain=${encodeURIComponent(data.domain)}`)
       const json = await res.json()
       setResults(json)
@@ -106,7 +111,7 @@ export default function CheckForm() {
             <h3>🔖 Schritt 1: Siegel auf Ihrer Website einbinden</h3>
             <p className="badge-intro">Binden Sie dieses Siegel jetzt ein – es zeigt Ihren Besuchern, dass Ihre E-Mails sicher konfiguriert sind. Es aktualisiert sich automatisch alle 14 Tage.</p>
             <div className="badge-preview">
-              <img src={`https://email-checken.de/badge/${data.domain}`} alt="E-Mail Sicherheits-Siegel" style={{ display: 'block' }} />
+              <img src={`https://email-checken.de/badge/${data.domain}${badgeBust}`} alt="E-Mail Sicherheits-Siegel" style={{ display: 'block' }} />
             </div>
             <p className="badge-code-label">Einbettungs-Code (kopieren &amp; auf Ihrer Website einfügen):</p>
             <div className="badge-code-row">

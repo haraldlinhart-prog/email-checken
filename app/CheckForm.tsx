@@ -18,11 +18,15 @@ interface ApiResponse {
 
 export default function CheckForm() {
   const [domain, setDomain] = useState('')
+  const [checkedDomain, setCheckedDomain] = useState('')
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<ApiResponse | null>(null)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
   const codeRef = useRef<HTMLElement>(null)
+
+  // Domain to use for badge: cleaned input if available, else checked domain
+  const badgeDomain = domain.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '').toLowerCase() || checkedDomain
 
   function copyEmbedCode(code: string) {
     navigator.clipboard.writeText(code).then(() => {
@@ -43,6 +47,7 @@ export default function CheckForm() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Fehler beim Check')
       setData(json)
+      setCheckedDomain(json.domain)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unbekannter Fehler')
     } finally {
@@ -73,6 +78,26 @@ export default function CheckForm() {
 
       {error && <p style={{ color: '#dc2626', marginTop: '1rem', fontSize: '0.9rem' }}>{error}</p>}
 
+      {badgeDomain && (
+        <div className="badge-section">
+          <h3>🔖 E-Mail-Siegel für Ihre Website</h3>
+          <p className="badge-intro">Binden Sie dieses Siegel jetzt ein – es zeigt Ihren Besuchern, dass Ihre E-Mails sicher konfiguriert sind. Es aktualisiert sich automatisch alle 14 Tage.</p>
+          <div className="badge-preview">
+            <img src={`https://email-checken.de/badge/${badgeDomain}`} alt="E-Mail Sicherheits-Siegel" style={{ display: 'block' }} />
+          </div>
+          <p className="badge-code-label">Einbettungs-Code (einfach kopieren &amp; auf Ihrer Website einfügen):</p>
+          <div className="badge-code-row">
+            <code ref={codeRef} className="badge-code">{`<img src="https://email-checken.de/badge/${badgeDomain}" alt="E-Mail Sicherheit geprüft">`}</code>
+            <button
+              className="btn btn-copy"
+              onClick={() => copyEmbedCode(`<img src="https://email-checken.de/badge/${badgeDomain}" alt="E-Mail Sicherheit geprüft">`)}
+            >
+              {copied ? '✓ Kopiert' : 'Kopieren'}
+            </button>
+          </div>
+        </div>
+      )}
+
       {data && (
         <>
           <div className="score-bar">
@@ -90,24 +115,6 @@ export default function CheckForm() {
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="badge-section">
-            <h3>🔖 E-Mail-Siegel für Ihre Website</h3>
-            <p className="badge-intro">Binden Sie dieses Siegel auf Ihrer Website ein – es zeigt Ihren Besuchern auf einen Blick, dass Ihre E-Mails sicher konfiguriert sind. Das Siegel aktualisiert sich automatisch alle 14 Tage.</p>
-            <div className="badge-preview">
-              <img src={`https://email-checken.de/badge/${data.domain}`} alt="E-Mail Sicherheits-Siegel" style={{ display: 'block' }} />
-            </div>
-            <p className="badge-code-label">Einbettungs-Code (einfach kopieren):</p>
-            <div className="badge-code-row">
-              <code ref={codeRef} className="badge-code">{`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`}</code>
-              <button
-                className="btn btn-copy"
-                onClick={() => copyEmbedCode(`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`)}
-              >
-                {copied ? '✓ Kopiert' : 'Kopieren'}
-              </button>
-            </div>
           </div>
         </>
       )}

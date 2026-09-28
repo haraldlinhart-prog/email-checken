@@ -2,7 +2,7 @@
   "framework": "nextjs",
   "crons": [
     {
-      "path": "/api/recheck?secret=CRON_SECRET_PLACEHOLDER",
+      "path": "/api/recheck?secret=8f5ac8f696ea22d98217b060c64b02524805c44da232b00e5c09ddd117912760",
       "schedule": "0 3 */14 * *"
     }
   ]

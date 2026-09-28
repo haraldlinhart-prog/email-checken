@@ -105,7 +105,9 @@ async function checkBlacklists(domain: string, mxIPs: string[]): Promise<CheckRe
     for (const bl of DNSBL_LIST) {
       const lookup = `${parts}.${bl}`
       const res = await dnsQuery(lookup, 'A')
-      if (res.length) {
+      // Valid DNSBL hits return 127.0.0.x (x=2-11); 127.255.255.254 = query error, not a listing
+      const realHit = res.some(r => r.startsWith('127.') && r !== '127.255.255.254' && r !== '127.255.255.255')
+      if (realHit) {
         listed.push(`${ip} auf ${bl}`)
       }
     }

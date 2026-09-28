@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240">
+  <defs>
+    <path id="arc" d="M 120,120 m -80,0 a 80,80 0 1,1 160,0 a 80,80 0 1,1 -160,0"/>
+  </defs>
+  <!-- Outer ring -->
+  <circle cx="120" cy="120" r="112" fill="none" stroke="#f97316" stroke-width="4"/>
+  <circle cx="120" cy="120" r="100" fill="#fff7ed"/>
+  <!-- Email icon -->
+  <rect x="75" y="88" width="90" height="64" rx="6" fill="none" stroke="#f97316" stroke-width="4"/>
+  <polyline points="75,94 120,128 165,94" fill="none" stroke="#f97316" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Curved text -->
+  <text font-family="-apple-system,sans-serif" font-size="13" font-weight="700" fill="#f97316" letter-spacing="2">
+    <textPath href="#arc" startOffset="8%">E-MAIL SICHERHEIT GEPRÜFT</textPath>
+  </text>
+</svg>

@@ -174,6 +174,20 @@ function calculateScore(results: CheckResult[]): number {
   return Math.min(100, score)
 }
 
+// Ampel-Logik: grün / gelb / rot
+// Rot: Blacklist-Eintrag ODER SPF+DMARC beide fail (score < 40)
+// Gelb: score 40-69 ODER unwichtige Checks (dkim/mtasts/tlsrpt) schlagen fehl
+// Grün: score >= 70 UND kein Blacklist-fail
+export function badgeColor(results: CheckResult[], score: number): 'green' | 'yellow' | 'red' {
+  const get = (id: string) => results.find(r => r.id === id)
+  const blacklistFail = get('blacklist')?.status === 'fail'
+  const spfFail = get('spf')?.status === 'fail'
+  const dmarcFail = get('dmarc')?.status === 'fail'
+  if (blacklistFail || (spfFail && dmarcFail) || score < 40) return 'red'
+  if (score < 70) return 'yellow'
+  return 'green'
+}
+
 async function saveToSupabase(domain: string, score: number, results: CheckResult[]) {
   if (!SUPABASE_KEY) return
   try {
@@ -191,6 +205,7 @@ async function saveToSupabase(domain: string, score: number, results: CheckResul
         last_checked_at: new Date().toISOString(),
         check_results: results,
         badge_verified: score >= 70,
+        badge_color: badgeColor(results, score),
       }),
     })
   } catch { /* non-fatal */ }
@@ -221,9 +236,10 @@ export async function GET(req: Request) {
   const results = [spf, dmarc, dkim, mx, blacklist, ptr, mtasts, tlsrpt]
   const score = calculateScore(results)
 
+  const color = badgeColor(results, score)
   await saveToSupabase(domain, score, results)
 
-  return Response.json({ domain, score, results }, {
+  return Response.json({ domain, score, badge_color: color, results }, {
     headers: { 'Cache-Control': 'public, max-age=300' }
   })
 }

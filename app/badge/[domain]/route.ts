@@ -52,10 +52,16 @@ export async function GET(_req: Request, { params }: { params: { domain: string 
   <text x="138" y="52" font-family="-apple-system,sans-serif" font-size="8" fill="rgba(255,255,255,0.65)" text-anchor="middle">${scoreText}${dateText}</text>
 </svg>`
 
+  const etag = `"${colorKey}-${score}-${lastChecked || 'gray'}"`
+  const lastModified = lastChecked ? new Date(lastChecked).toUTCString() : new Date(0).toUTCString()
+
   return new Response(svg, {
     headers: {
       'Content-Type': 'image/svg+xml',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': 'no-cache',
+      'ETag': etag,
+      'Last-Modified': lastModified,
+      'Vary': 'Accept-Encoding',
     },
   })
 }

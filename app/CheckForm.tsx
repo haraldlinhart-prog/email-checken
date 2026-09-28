@@ -8,11 +8,19 @@ interface CheckResult {
   detail: string
 }
 
-interface ApiResponse {
+interface CheckResponse {
+  domain: string
+  score: number
+  badge_color?: string
+  error?: string
+}
+
+interface ResultsResponse {
   domain: string
   score: number
   badge_color?: string
   results: CheckResult[]
+  last_checked_at?: string
   error?: string
 }
 
@@ -20,10 +28,11 @@ export default function CheckForm() {
   const [domain, setDomain] = useState('')
   const [checkedDomain, setCheckedDomain] = useState('')
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<ApiResponse | null>(null)
+  const [data, setData] = useState<CheckResponse | null>(null)
+  const [results, setResults] = useState<ResultsResponse | null>(null)
+  const [loadingResults, setLoadingResults] = useState(false)
   const [error, setError] = useState('')
   const [copied, setCopied] = useState(false)
-  const [badgeInstalled, setBadgeInstalled] = useState(false)
   const codeRef = useRef<HTMLElement>(null)
 
   function copyEmbedCode(code: string) {
@@ -31,6 +40,20 @@ export default function CheckForm() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     })
+  }
+
+  async function handleBadgeInstalled() {
+    if (!data) return
+    setLoadingResults(true)
+    try {
+      const res = await fetch(`/api/results?domain=${encodeURIComponent(data.domain)}`)
+      const json = await res.json()
+      setResults(json)
+    } catch {
+      setResults(null)
+    } finally {
+      setLoadingResults(false)
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -45,8 +68,8 @@ export default function CheckForm() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Fehler beim Check')
       setData(json)
+      setResults(null)
       setCheckedDomain(json.domain)
-      setBadgeInstalled(false)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unbekannter Fehler')
     } finally {
@@ -96,25 +119,26 @@ export default function CheckForm() {
               </button>
             </div>
 
-            {!badgeInstalled && (
+            {!results && (
               <button
                 className="btn btn-installed"
-                onClick={() => setBadgeInstalled(true)}
+                onClick={handleBadgeInstalled}
+                disabled={loadingResults}
               >
-                ✓ Siegel ist eingebaut – Testergebnisse anzeigen
+                {loadingResults ? 'Lade Ergebnisse…' : '✓ Siegel ist eingebaut – Testergebnisse anzeigen'}
               </button>
             )}
           </div>
 
-          {badgeInstalled && (
+          {results && results.results && (
             <>
               <div className="score-bar">
-                <div className="score-num">{data.score}<span style={{ fontSize: '1.2rem', fontWeight: 400 }}>/100</span></div>
-                <div className="score-label">E-Mail-Sicherheits-Score für <strong>{data.domain}</strong></div>
+                <div className="score-num">{results.score}<span style={{ fontSize: '1.2rem', fontWeight: 400 }}>/100</span></div>
+                <div className="score-label">E-Mail-Sicherheits-Score für <strong>{results.domain}</strong></div>
               </div>
 
               <div className="results">
-                {data.results.map(r => (
+                {results.results.map((r: CheckResult) => (
                   <div key={r.id} className={`result-item ${r.status}`}>
                     <span className="icon">{iconFor(r.status)}</span>
                     <div>

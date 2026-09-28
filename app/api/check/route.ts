@@ -239,7 +239,7 @@ export async function GET(req: Request) {
   const color = badgeColor(results, score)
   await saveToSupabase(domain, score, results)
 
-  return Response.json({ domain, score, badge_color: color, results }, {
+  return Response.json({ domain, score, badge_color: color }, {
     headers: { 'Cache-Control': 'public, max-age=300' }
   })
 }

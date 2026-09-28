@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 interface CheckResult {
   id: string
@@ -11,6 +11,7 @@ interface CheckResult {
 interface ApiResponse {
   domain: string
   score: number
+  badge_color?: string
   results: CheckResult[]
   error?: string
 }
@@ -20,6 +21,15 @@ export default function CheckForm() {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<ApiResponse | null>(null)
   const [error, setError] = useState('')
+  const [copied, setCopied] = useState(false)
+  const codeRef = useRef<HTMLElement>(null)
+
+  function copyEmbedCode(code: string) {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -83,9 +93,21 @@ export default function CheckForm() {
           </div>
 
           <div className="badge-section">
-            <h3>📧 E-Mail-Siegel einbinden</h3>
-            <p style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>Zeigen Sie Ihren Kunden, dass Ihre E-Mails sicher sind:</p>
-            <code>{`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail geprüft" />`}</code>
+            <h3>🔖 E-Mail-Siegel für Ihre Website</h3>
+            <p className="badge-intro">Binden Sie dieses Siegel auf Ihrer Website ein – es zeigt Ihren Besuchern auf einen Blick, dass Ihre E-Mails sicher konfiguriert sind. Das Siegel aktualisiert sich automatisch alle 14 Tage.</p>
+            <div className="badge-preview">
+              <img src={`https://email-checken.de/badge/${data.domain}`} alt="E-Mail Sicherheits-Siegel" style={{ display: 'block' }} />
+            </div>
+            <p className="badge-code-label">Einbettungs-Code (einfach kopieren):</p>
+            <div className="badge-code-row">
+              <code ref={codeRef} className="badge-code">{`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`}</code>
+              <button
+                className="btn btn-copy"
+                onClick={() => copyEmbedCode(`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`)}
+              >
+                {copied ? '✓ Kopiert' : 'Kopieren'}
+              </button>
+            </div>
           </div>
         </>
       )}

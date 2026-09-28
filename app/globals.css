@@ -173,21 +173,53 @@ header nav a:hover { color: var(--fg); }
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   margin-top: 1rem;
-  text-align: center;
+  text-align: left;
 }
 
 .badge-section h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-.badge-section code {
+
+.badge-intro {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.badge-preview {
+  margin-bottom: 1rem;
+}
+
+.badge-code-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.badge-code-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.badge-code {
+  flex: 1;
   display: block;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
-  font-size: 0.8rem;
-  text-align: left;
+  font-size: 0.78rem;
   word-break: break-all;
-  margin-top: 0.5rem;
   color: var(--muted);
+  font-family: monospace;
+}
+
+.btn-copy {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  padding: 0.4rem 0.9rem;
+  min-width: 90px;
 }
 
 .features {

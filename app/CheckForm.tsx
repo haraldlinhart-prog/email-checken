@@ -115,10 +115,10 @@ export default function CheckForm() {
             </div>
             <p className="badge-code-label">Einbettungs-Code (kopieren &amp; auf Ihrer Website einfügen):</p>
             <div className="badge-code-row">
-              <code ref={codeRef} className="badge-code">{`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`}</code>
+              <code ref={codeRef} className="badge-code">{`<img src="https://email-checken.de/badge/${data.domain}?v=${Math.floor(Date.now()/86400000)}" alt="E-Mail Sicherheit geprüft">`}</code>
               <button
                 className="btn btn-copy"
-                onClick={() => copyEmbedCode(`<img src="https://email-checken.de/badge/${data.domain}" alt="E-Mail Sicherheit geprüft">`)}
+                onClick={() => copyEmbedCode(`<img src="https://email-checken.de/badge/${data.domain}?v=${Math.floor(Date.now()/86400000)}" alt="E-Mail Sicherheit geprüft">`)}
               >
                 {copied ? '✓ Kopiert' : 'Kopieren'}
               </button>

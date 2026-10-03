@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'E-Mail-Sicherheitscheck | email-checken.de',
     description: 'SPF, DKIM, DMARC, Blacklists – prüfen Sie Ihre Domain sofort und kostenlos.',
-    url: `${SITE}/`,
+    url: SITE,
     siteName: 'email-checken.de',
     type: 'website',
     locale: 'de_DE',

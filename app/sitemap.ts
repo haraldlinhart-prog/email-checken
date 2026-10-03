@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ]
   }
   return [
-    ...pair('/', '/en', 1),
+    ...pair('', '/en', 1),
     ...pair('/kontakt', '/en/contact', 0.5),
     { url: `${SITE}/datenschutz`, changeFrequency: 'yearly', priority: 0.2 },
   ]

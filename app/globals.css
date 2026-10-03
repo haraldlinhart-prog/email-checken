@@ -279,8 +279,10 @@ header nav .lang-switch a { margin-left: 0; font-size: 0.8rem; font-weight: 600;
 }
 .btn-installed:hover { background: #15803d; }
 
+.hero .check-form { margin-bottom: 0; }
+
 .features {
-  padding: 2rem 0;
+  padding: 0 0 2.5rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;

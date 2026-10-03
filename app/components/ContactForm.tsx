@@ -7,17 +7,17 @@ const T = {
       'E-Mail-Sicherheit verbessern',
       'Ergebnis meines Checks',
       'Blacklist-Eintrag entfernen',
-      'SPF/DKIM/DMARC Hilfe',
+      'Hilfe zu SPF/DKIM/DMARC',
       'Sonstiges',
     ],
     sent: '✅ Nachricht gesendet – wir melden uns bald!',
     name: 'Ihr Name',
-    email: 'Ihre E-Mail',
+    email: 'Ihre E-Mail-Adresse',
     subject: 'Betreff',
     message: 'Ihre Nachricht',
-    consentBefore: 'Mit dem Absenden stimmen Sie der Verarbeitung gemäß unserer ',
+    consentBefore: 'Wir verwenden Ihre Angaben nur zur Beantwortung Ihrer Anfrage. Details finden Sie in unserer ',
     consentLink: 'Datenschutzerklärung',
-    consentAfter: ' zu.',
+    consentAfter: '.',
     sending: 'Sende…',
     send: 'Nachricht senden',
     error: 'Fehler beim Senden. Bitte versuchen Sie es erneut.',
@@ -35,7 +35,7 @@ const T = {
     email: 'Your email address',
     subject: 'Subject',
     message: 'Your message',
-    consentBefore: 'By sending this form, you agree to your data being processed as described in our ',
+    consentBefore: 'We only use your details to answer your request. For more information, see our ',
     consentLink: 'privacy policy (German)',
     consentAfter: '.',
     sending: 'Sending…',
@@ -81,7 +81,7 @@ export default function ContactForm({ lang = 'de' }: { lang?: 'de' | 'en' }) {
         {SUBJECTS.map(s => <option key={s}>{s}</option>)}
       </select>
       <textarea style={{ ...fieldStyle, minHeight: '120px', resize: 'vertical' }} aria-label={t.message}
-        placeholder={t.message} value={form.message} onChange={e => set('message', e.target.value)} required />
+        placeholder={t.message} maxLength={4000} value={form.message} onChange={e => set('message', e.target.value)} required />
       <input type="text" name="hp" value={form.hp} onChange={e => set('hp', e.target.value)} style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
       <p style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>{t.consentBefore}<a href="/datenschutz" hrefLang="de" style={{ color: 'var(--accent)' }}>{t.consentLink}</a>{t.consentAfter}</p>
       <button className="btn" type="submit" disabled={status === 'sending'} style={{ alignSelf: 'flex-start' }}>

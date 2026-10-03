@@ -17,13 +17,15 @@ export async function POST(req: Request) {
   if (!name || !email || !message) return Response.json({ error: 'Pflichtfelder fehlen' }, { status: 400 })
   if (message.length > 4000) return Response.json({ error: 'Nachricht zu lang' }, { status: 400 })
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: 'email-checken.de <noreply@email-checken.de>',
     to: 'email@pan21.com',
     replyTo: email,
     subject: `[email-checken.de] ${subject}`,
     text: `Von: ${name} <${email}>\nBetreff: ${subject}\n\n${message}`,
   })
+  // Don't report "sent" to the visitor if Resend rejected the message
+  if (error) return Response.json({ error: 'Versand fehlgeschlagen' }, { status: 502 })
 
   return Response.json({ ok: true })
 }

@@ -24,6 +24,7 @@ export async function GET(req: Request, { params }: { params: { domain: string }
   let score = 0
   let lastChecked = ''
   let colorKey: keyof typeof COLORS = 'gray'
+  let checked = false
 
   if (SUPABASE_KEY) {
     try {
@@ -33,18 +34,22 @@ export async function GET(req: Request, { params }: { params: { domain: string }
       )
       const rows = await res.json() as { score: number; badge_color: string; last_checked_at: string }[]
       if (rows?.[0]) {
+        checked = true
         score = rows[0].score
-        colorKey = (rows[0].badge_color as keyof typeof COLORS) || 'gray'
+        const c = rows[0].badge_color
+        colorKey = c === 'green' || c === 'yellow' || c === 'red' ? c : 'gray'
         lastChecked = rows[0].last_checked_at?.split('T')[0] || ''
       }
     } catch { /* non-fatal */ }
   }
 
-  const { bg, label: labelDe, sub } = COLORS[colorKey]
+  const { bg, label: labelDe } = COLORS[colorKey]
   const label = en ? LABELS_EN[colorKey] : labelDe
-  const heading = en ? 'EMAIL SECURITY' : 'E-MAIL SICHERHEIT'
-  const scoreText = score > 0 ? `Score: ${score}/100` : (en ? 'not checked yet' : 'noch kein Check')
-  const dateText = lastChecked ? (en ? ` · checked: ${lastChecked}` : ` · geprüft: ${lastChecked}`) : ''
+  const heading = en ? 'EMAIL SECURITY' : 'E-MAIL-SICHERHEIT'
+  const scoreText = checked ? `Score: ${score}/100` : (en ? 'not checked yet' : 'noch nicht geprüft')
+  // ISO date for English, DD.MM.YYYY for German
+  const [y, m, d] = lastChecked.split('-')
+  const dateText = lastChecked ? (en ? ` · checked: ${lastChecked}` : ` · geprüft: ${d}.${m}.${y}`) : ''
 
   // Ampel-Kreis links
   const circleColor = colorKey === 'gray' ? '#9ca3af' : bg

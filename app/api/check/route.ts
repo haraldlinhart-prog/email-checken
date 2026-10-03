@@ -3,13 +3,16 @@ export const runtime = 'edge'
 const SUPABASE_URL = 'https://frbvsdumltlzisddrlbi.supabase.co'
 const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || ''
 
-// DNSBLs to check (queried via DNS lookup pattern)
-const DNSBL_LIST = [
-  'zen.spamhaus.org',
-  'bl.spamcop.net',
-  'dnsbl.sorbs.net',
-  'b.barracudacentral.org',
-  'dnsbl-1.uceprotect.net',
+// DNSBLs to check (queried via DNS lookup pattern).
+// Only lists that actually answer queries from Cloudflare's public resolver:
+// Spamhaus blocks public resolvers (always returns 127.255.255.254 without a
+// DQS key) and SORBS was shut down in 2024, so both would only fake a "clean" result.
+const DNSBLS = [
+  { zone: 'bl.spamcop.net', name: 'SpamCop' },
+  { zone: 'b.barracudacentral.org', name: 'Barracuda' },
+  { zone: 'dnsbl-1.uceprotect.net', name: 'UCEPROTECT' },
+  { zone: 'psbl.surriel.com', name: 'PSBL' },
+  { zone: 'bl.mailspike.net', name: 'Mailspike' },
 ]
 
 // Common DKIM selectors to try
@@ -41,6 +44,11 @@ function pick(results: BiResult[], lang: Lang): CheckResult[] {
   return results.map(r => ({ id: r.id, label: r.label[lang], status: r.status, detail: r.detail[lang] }))
 }
 
+// Shortens long DNS records for display, with an ellipsis when cut.
+function short(s: string, max = 80) {
+  return s.length > max ? `${s.substring(0, max)}…` : s
+}
+
 const L = {
   spf: { de: 'SPF-Record', en: 'SPF record' },
   dmarc: { de: 'DMARC-Record', en: 'DMARC record' },
@@ -52,6 +60,8 @@ const L = {
   tlsrpt: { de: 'TLS-Reporting (TLSRPT)', en: 'TLS reporting (TLSRPT)' },
 }
 
+const RR_TYPE: Record<string, number> = { A: 1, PTR: 12, MX: 15, TXT: 16 }
+
 async function dnsQuery(name: string, type: string): Promise<string[]> {
   try {
     const res = await fetch(
@@ -59,8 +69,12 @@ async function dnsQuery(name: string, type: string): Promise<string[]> {
       { headers: { Accept: 'application/dns-json' } }
     )
     if (!res.ok) return []
-    const data = await res.json() as { Answer?: { data: string }[] }
-    return (data.Answer || []).map((r) => r.data.replace(/"/g, '').trim())
+    const data = await res.json() as { Answer?: { type: number; data: string }[] }
+    return (data.Answer || [])
+      // Ignore CNAME answers that precede the requested record type
+      .filter(r => r.type === RR_TYPE[type])
+      // Long TXT records are split into several quoted strings: join them without gaps
+      .map(r => r.data.replace(/"\s*"/g, '').replace(/"/g, '').trim())
   } catch {
     return []
   }
@@ -68,46 +82,78 @@ async function dnsQuery(name: string, type: string): Promise<string[]> {
 
 async function checkSPF(domain: string): Promise<BiResult> {
   const records = await dnsQuery(domain, 'TXT')
-  const spf = records.find(r => r.startsWith('v=spf1'))
-  if (!spf) {
+  const spfs = records.filter(r => /^v=spf1(\s|$)/i.test(r))
+  if (!spfs.length) {
     return res('spf', 'fail', L.spf,
       'Kein SPF-Record gefunden. E-Mails können in Ihrem Namen gefälscht werden.',
       'No SPF record found. Anyone can send forged email in your name.')
   }
-  if (spf.includes('+all')) {
+  if (spfs.length > 1) {
     return res('spf', 'fail', L.spf,
-      'SPF mit "+all" gefunden – dies erlaubt jedem das Versenden! Bitte auf "-all" oder "~all" ändern.',
-      'SPF record uses "+all" – this allows anyone to send email for your domain! Change it to "-all" or "~all".')
+      `${spfs.length} SPF-Records gefunden – erlaubt ist genau einer (RFC 7208). Empfänger werten SPF deshalb als Fehler. Bitte zu einem Record zusammenführen.`,
+      `${spfs.length} SPF records found – only one is allowed (RFC 7208), so receivers treat SPF as an error. Please merge them into a single record.`)
   }
-  if (spf.includes('~all')) {
+  const spf = spfs[0]
+  const rec = short(spf)
+  const all = spf.toLowerCase().match(/(?:^|\s)([+?~-]?)all(?:\s|$)/)
+  if (all && (all[1] === '+' || all[1] === '')) {
+    return res('spf', 'fail', L.spf,
+      `SPF-Record endet mit "+all" – damit darf jeder in Ihrem Namen E-Mails versenden! Bitte auf "-all" oder "~all" ändern. Record: ${rec}`,
+      `SPF record ends with "+all" – this allows anyone to send email for your domain! Change it to "-all" or "~all". Record: ${rec}`)
+  }
+  if (all && all[1] === '~') {
     return res('spf', 'warn', L.spf,
-      `SPF vorhanden, aber "~all" (SoftFail). Empfehlung: "-all" für harte Ablehnung. Record: ${spf.substring(0, 80)}`,
-      `SPF is in place, but uses "~all" (soft fail). We recommend "-all" so unauthorized mail is rejected. Record: ${spf.substring(0, 80)}`)
+      `SPF vorhanden, aber mit "~all" (SoftFail). Empfehlung: "-all", damit nicht autorisierte E-Mails abgelehnt werden. Record: ${rec}`,
+      `SPF is in place, but uses "~all" (soft fail). We recommend "-all" so unauthorized email is rejected. Record: ${rec}`)
   }
-  const tail = `${spf.substring(0, 80)}${spf.length > 80 ? '…' : ''}`
-  return res('spf', 'pass', L.spf,
-    `SPF korrekt konfiguriert mit "-all". ${tail}`,
-    `SPF is configured correctly with "-all". ${tail}`)
+  if (all && all[1] === '?') {
+    return res('spf', 'warn', L.spf,
+      `SPF vorhanden, aber mit "?all" (Neutral) – das schützt nicht vor gefälschten Absendern. Empfehlung: "-all". Record: ${rec}`,
+      `SPF is in place, but uses "?all" (neutral), which doesn't protect against forged senders. We recommend "-all". Record: ${rec}`)
+  }
+  if (all) {
+    return res('spf', 'pass', L.spf,
+      `SPF korrekt konfiguriert mit "-all". Record: ${rec}`,
+      `SPF is configured correctly with "-all". Record: ${rec}`)
+  }
+  if (/(?:^|\s)redirect=/i.test(spf)) {
+    return res('spf', 'pass', L.spf,
+      `SPF vorhanden; die Richtlinie wird per "redirect=" von einer anderen Domain übernommen. Record: ${rec}`,
+      `SPF is in place; the policy is taken over from another domain via "redirect=". Record: ${rec}`)
+  }
+  return res('spf', 'warn', L.spf,
+    `SPF vorhanden, aber ohne abschließendes "all" – nicht autorisierte Absender werden nicht abgelehnt. Empfehlung: mit "-all" abschließen. Record: ${rec}`,
+    `SPF is in place, but has no closing "all" mechanism, so unauthorized senders aren't rejected. We recommend ending it with "-all". Record: ${rec}`)
 }
 
 async function checkDMARC(domain: string): Promise<BiResult> {
   const records = await dnsQuery(`_dmarc.${domain}`, 'TXT')
-  const dmarc = records.find(r => r.startsWith('v=DMARC1'))
+  const dmarc = records.find(r => /^v=DMARC1/i.test(r))
   if (!dmarc) {
     return res('dmarc', 'fail', L.dmarc,
       'Kein DMARC-Record gefunden. Ohne DMARC kein Schutz vor E-Mail-Spoofing.',
       'No DMARC record found. Without DMARC, your domain has no protection against email spoofing.')
   }
-  if (dmarc.includes('p=none')) {
-    return res('dmarc', 'warn', L.dmarc,
-      `DMARC vorhanden, aber Policy "none" schützt nicht aktiv. Empfehlung: p=quarantine oder p=reject. Record: ${dmarc.substring(0, 80)}`,
-      `DMARC is in place, but the policy "none" doesn't actively protect you. We recommend p=quarantine or p=reject. Record: ${dmarc.substring(0, 80)}`)
+  const rec = short(dmarc)
+  // Read the p= tag exactly (sp= is the subdomain policy and must not be confused with it)
+  const tags = new Map(dmarc.split(';').map(t => {
+    const [k, ...v] = t.split('=')
+    return [k.trim().toLowerCase(), v.join('=').trim().toLowerCase()] as [string, string]
+  }))
+  const policy = tags.get('p')
+  if (policy === 'quarantine' || policy === 'reject') {
+    return res('dmarc', 'pass', L.dmarc,
+      `DMARC aktiv mit Policy "${policy}". Record: ${rec}`,
+      `DMARC is active with policy "${policy}". Record: ${rec}`)
   }
-  const policy = dmarc.match(/p=(quarantine|reject)/)?.[1] || 'unknown'
-  const tail = `${dmarc.substring(0, 80)}${dmarc.length > 80 ? '…' : ''}`
-  return res('dmarc', 'pass', L.dmarc,
-    `DMARC aktiv mit Policy "${policy}". ${tail}`,
-    `DMARC is active with policy "${policy}". ${tail}`)
+  if (policy === 'none') {
+    return res('dmarc', 'warn', L.dmarc,
+      `DMARC vorhanden, aber Policy "none" schützt nicht aktiv. Empfehlung: p=quarantine oder p=reject. Record: ${rec}`,
+      `DMARC is in place, but the policy "none" doesn't actively protect you. We recommend p=quarantine or p=reject. Record: ${rec}`)
+  }
+  return res('dmarc', 'warn', L.dmarc,
+    `DMARC-Record ohne gültige Policy (p=none, quarantine oder reject). Record: ${rec}`,
+    `DMARC record without a valid policy (p=none, quarantine or reject). Record: ${rec}`)
 }
 
 async function checkDKIM(domain: string): Promise<BiResult> {
@@ -116,20 +162,20 @@ async function checkDKIM(domain: string): Promise<BiResult> {
     const dkim = records.find(r => r.includes('v=DKIM1') || r.includes('k=rsa') || r.includes('p='))
     if (dkim) {
       return res('dkim', 'pass', L.dkim,
-        `DKIM-Record gefunden (Selektor: ${selector}). Digitale Signatur ist konfiguriert.`,
+        `DKIM-Record gefunden (Selektor: ${selector}). Die digitale Signatur ist eingerichtet.`,
         `DKIM record found (selector: ${selector}). Your digital signature is set up.`)
     }
   }
-  const sel = `${DKIM_SELECTORS.slice(0, 4).join(', ')}, …`
+  const sel = `${DKIM_SELECTORS.slice(0, 4).join(', ')} …`
   return res('dkim', 'warn', L.dkim,
-    `Kein DKIM-Record bei gängigen Selektoren gefunden (${sel}). Prüfen Sie Ihren Mail-Provider.`,
+    `Kein DKIM-Record bei gängigen Selektoren gefunden (${sel}). Prüfen Sie die DKIM-Einstellungen bei Ihrem Mail-Provider.`,
     `No DKIM record found for common selectors (${sel}). Check the DKIM settings with your email provider.`)
 }
 
 async function checkMX(domain: string): Promise<{ result: BiResult; mxIPs: string[] }> {
-  const records = await dnsQuery(domain, 'MX')
+  const raw = await dnsQuery(domain, 'MX')
   const mxIPs: string[] = []
-  if (!records.length) {
+  if (!raw.length) {
     return {
       result: res('mx', 'fail', L.mx,
         'Keine MX-Records gefunden. Die Domain kann keine E-Mails empfangen.',
@@ -137,72 +183,90 @@ async function checkMX(domain: string): Promise<{ result: BiResult; mxIPs: strin
       mxIPs,
     }
   }
-  // Resolve first MX to IP
-  const firstMX = records[0].replace(/^\d+\s+/, '').replace(/\.$/, '')
-  const aRecords = await dnsQuery(firstMX, 'A')
+  // Sort by priority (lowest value = primary mail server), strip trailing dots
+  const records = raw
+    .map(r => {
+      const m = r.match(/^(\d+)\s+(.+)$/)
+      return { prio: m ? Number(m[1]) : 0, host: (m ? m[2] : r).replace(/\.$/, '') }
+    })
+    .sort((a, b) => a.prio - b.prio)
+  if (records.every(r => r.host === '')) {
+    return {
+      result: res('mx', 'fail', L.mx,
+        'Die Domain hat einen Null-MX-Record (RFC 7505) und nimmt ausdrücklich keine E-Mails an.',
+        'This domain has a null MX record (RFC 7505) and explicitly accepts no email.'),
+      mxIPs,
+    }
+  }
+  // Resolve the primary MX to IP addresses
+  const aRecords = await dnsQuery(records[0].host, 'A')
   if (aRecords.length) mxIPs.push(...aRecords.slice(0, 2))
-  const list = records.slice(0, 2).map(r => r.replace(/^\d+\s+/, '')).join(', ')
+  const list = records.slice(0, 2).map(r => r.host).join(', ')
   const more = records.length - 2
+  if (!aRecords.length) {
+    return {
+      result: res('mx', 'warn', L.mx,
+        `MX-Record vorhanden, aber der primäre Mail-Server ${records[0].host} lässt sich nicht auflösen.`,
+        `MX record found, but the primary mail server ${records[0].host} doesn't resolve.`),
+      mxIPs,
+    }
+  }
   return {
     result: res('mx', 'pass', L.mx,
-      `${records.length} MX-Record(s) gefunden: ${list}${more > 0 ? ` (+${more} weitere)` : ''}`,
+      `${records.length} MX-Record${records.length === 1 ? '' : 's'} gefunden: ${list}${more > 0 ? ` (+${more} weitere)` : ''}`,
       `${records.length} MX record${records.length === 1 ? '' : 's'} found: ${list}${more > 0 ? ` (+${more} more)` : ''}`),
     mxIPs,
   }
 }
 
-async function checkBlacklists(domain: string, mxIPs: string[]): Promise<BiResult> {
-  const toCheck = mxIPs.slice(0, 2) // only check first 2 MX IPs
+async function checkBlacklists(mxIPs: string[]): Promise<BiResult> {
+  const toCheck = mxIPs.slice(0, 2) // only check the first 2 IPs of the primary MX
 
   if (!toCheck.length) {
     return res('blacklist', 'warn', L.blacklist,
-      'Konnte keine MX-IP-Adressen auflösen für den Blacklist-Check.',
-      'Could not resolve any MX IP addresses for the blacklist check.')
+      'Für den Blacklist-Check konnten keine IP-Adressen der Mail-Server ermittelt werden.',
+      'Could not resolve any mail server IP addresses for the blacklist check.')
   }
 
-  const listed: { ip: string; bl: string }[] = []
+  const lookups = toCheck.flatMap(ip => DNSBLS.map(bl => ({ ip, bl })))
+  const answers = await Promise.all(lookups.map(({ ip, bl }) =>
+    dnsQuery(`${ip.split('.').reverse().join('.')}.${bl.zone}`, 'A')))
+  // Valid DNSBL hits return 127.0.0.x; 127.255.255.x are query errors, not listings
+  const listed = lookups.filter((_, i) =>
+    answers[i].some(x => x.startsWith('127.') && !x.startsWith('127.255.255.')))
 
-  for (const ip of toCheck) {
-    const parts = ip.split('.').reverse().join('.')
-    for (const bl of DNSBL_LIST) {
-      const lookup = `${parts}.${bl}`
-      const r = await dnsQuery(lookup, 'A')
-      // Valid DNSBL hits return 127.0.0.x (x=2-11); 127.255.255.254 = query error, not a listing
-      const realHit = r.some(x => x.startsWith('127.') && x !== '127.255.255.254' && x !== '127.255.255.255')
-      if (realHit) {
-        listed.push({ ip, bl })
-      }
-    }
-  }
-
+  const names = DNSBLS.map(b => b.name).join(', ')
   if (listed.length) {
+    const de = listed.map(l => `${l.ip} auf ${l.bl.name}`).join('; ')
+    const en = listed.map(l => `${l.ip} on ${l.bl.name}`).join('; ')
     return res('blacklist', 'fail', L.blacklist,
-      `⛔ Domain-IP auf ${listed.length} Blockliste(n) gefunden: ${listed.map(l => `${l.ip} auf ${l.bl}`).join('; ')}`,
-      `⛔ Mail server IP found on ${listed.length} blocklist${listed.length === 1 ? '' : 's'}: ${listed.map(l => `${l.ip} on ${l.bl}`).join('; ')}`)
+      `Mail-Server-IP auf ${listed.length} Blockliste${listed.length === 1 ? '' : 'n'} gefunden: ${de}`,
+      `Mail server IP found on ${listed.length} blocklist${listed.length === 1 ? '' : 's'}: ${en}`)
   }
 
   return res('blacklist', 'pass', L.blacklist,
-    `Keine Einträge auf ${DNSBL_LIST.length} geprüften Blocklisten (Spamhaus, SpamCop, SORBS, Barracuda, UCEPROTECT).`,
-    `Not listed on any of the ${DNSBL_LIST.length} blocklists checked (Spamhaus, SpamCop, SORBS, Barracuda, UCEPROTECT).`)
+    `Keine Einträge auf den ${DNSBLS.length} geprüften Blocklisten (${names}).`,
+    `Not listed on any of the ${DNSBLS.length} blocklists checked (${names}).`)
 }
 
 async function checkPTR(mxIPs: string[]): Promise<BiResult> {
   if (!mxIPs.length) {
     return res('ptr', 'warn', L.ptr,
-      'Keine MX-IP verfügbar für PTR-Prüfung.',
-      'No MX IP address available for the PTR check.')
+      'Für die PTR-Prüfung ist keine IP-Adresse eines Mail-Servers verfügbar.',
+      'No mail server IP address available for the PTR check.')
   }
   const ip = mxIPs[0]
   const reverse = ip.split('.').reverse().join('.') + '.in-addr.arpa'
   const ptr = await dnsQuery(reverse, 'PTR')
   if (!ptr.length) {
     return res('ptr', 'warn', L.ptr,
-      `Kein PTR-Record für ${ip}. Viele Mailserver lehnen E-Mails ohne Reverse DNS ab.`,
+      `Kein PTR-Record für ${ip}. Viele Mail-Server lehnen E-Mails von Servern ohne Reverse DNS ab.`,
       `No PTR record for ${ip}. Many mail servers reject email from servers without reverse DNS.`)
   }
+  const host = ptr[0].replace(/\.$/, '')
   return res('ptr', 'pass', L.ptr,
-    `PTR-Record für ${ip}: ${ptr[0]}`,
-    `PTR record for ${ip}: ${ptr[0]}`)
+    `PTR-Record für ${ip}: ${host}`,
+    `PTR record for ${ip}: ${host}`)
 }
 
 async function checkMTASTS(domain: string): Promise<BiResult> {
@@ -210,12 +274,12 @@ async function checkMTASTS(domain: string): Promise<BiResult> {
   const mtasts = records.find(r => r.startsWith('v=STSv1'))
   if (!mtasts) {
     return res('mtasts', 'warn', L.mtasts,
-      'Kein MTA-STS-Record gefunden. MTA-STS erzwingt verschlüsselte E-Mail-Übertragung.',
+      'Kein MTA-STS-Record gefunden. MTA-STS erzwingt die verschlüsselte Zustellung von E-Mails an Ihre Domain.',
       'No MTA-STS record found. MTA-STS enforces encrypted email delivery to your domain.')
   }
   return res('mtasts', 'pass', L.mtasts,
-    `MTA-STS konfiguriert: ${mtasts}`,
-    `MTA-STS is configured: ${mtasts}`)
+    `MTA-STS ist eingerichtet: ${short(mtasts)}`,
+    `MTA-STS is configured: ${short(mtasts)}`)
 }
 
 async function checkTLSRPT(domain: string): Promise<BiResult> {
@@ -223,12 +287,12 @@ async function checkTLSRPT(domain: string): Promise<BiResult> {
   const tlsrpt = records.find(r => r.startsWith('v=TLSRPTv1'))
   if (!tlsrpt) {
     return res('tlsrpt', 'warn', L.tlsrpt,
-      'Kein TLSRPT-Record. TLS-Reporting informiert Sie über Zustellungsfehler.',
-      'No TLSRPT record. TLS reporting notifies you about encrypted delivery failures.')
+      'Kein TLSRPT-Record gefunden. TLS-Reporting informiert Sie über Probleme bei der verschlüsselten Zustellung.',
+      'No TLSRPT record found. TLS reporting notifies you about problems with encrypted delivery.')
   }
   return res('tlsrpt', 'pass', L.tlsrpt,
-    `TLSRPT aktiv: ${tlsrpt}`,
-    `TLSRPT is active: ${tlsrpt}`)
+    `TLSRPT ist aktiv: ${short(tlsrpt)}`,
+    `TLSRPT is active: ${short(tlsrpt)}`)
 }
 
 function calculateScore(results: CheckResult[]): number {
@@ -245,8 +309,8 @@ function calculateScore(results: CheckResult[]): number {
 }
 
 // Ampel-Logik: grün / gelb / rot
-// Rot: Blacklist-Eintrag ODER SPF+DMARC beide fail (score < 40)
-// Gelb: score 40-69 ODER unwichtige Checks (dkim/mtasts/tlsrpt) schlagen fehl
+// Rot: Blacklist-Eintrag ODER SPF+DMARC beide fail ODER score < 40
+// Gelb: score 40-69
 // Grün: score >= 70 UND kein Blacklist-fail
 function badgeColor(results: CheckResult[], score: number): 'green' | 'yellow' | 'red' {
   const get = (id: string) => results.find(r => r.id === id)
@@ -286,8 +350,13 @@ export async function GET(req: Request) {
   const lang: Lang = url.searchParams.get('lang') === 'en' ? 'en' : 'de'
   const domain = url.searchParams.get('domain')?.toLowerCase().replace(/^www\./, '') || ''
 
-  if (!domain || !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
-    return Response.json({ error: lang === 'en' ? 'Please enter a valid domain (e.g. example.com).' : 'Ungültige Domain' }, { status: 400 })
+  // Last label: letters, or a punycode TLD (xn--…) for internationalized domains
+  if (!domain || !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]\.(?:[a-z]{2,}|xn--[a-z0-9-]+)$/.test(domain)) {
+    return Response.json({
+      error: lang === 'en'
+        ? 'Please enter a valid domain (e.g. example.com).'
+        : 'Bitte geben Sie eine gültige Domain ein (z. B. beispiel.de).',
+    }, { status: 400 })
   }
 
   const [spf, dmarc, dkim, { result: mx, mxIPs }] = await Promise.all([
@@ -298,7 +367,7 @@ export async function GET(req: Request) {
   ])
 
   const [blacklist, ptr, mtasts, tlsrpt] = await Promise.all([
-    checkBlacklists(domain, mxIPs),
+    checkBlacklists(mxIPs),
     checkPTR(mxIPs),
     checkMTASTS(domain),
     checkTLSRPT(domain),

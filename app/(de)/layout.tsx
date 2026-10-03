@@ -1,16 +1,20 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import '../globals.css'
+import { SITE } from '../components/i18n'
 
+// Defaults for German pages. Every page sets its own canonical/hreflang;
+// the layout deliberately has none, so no page inherits the home canonical.
 export const metadata: Metadata = {
-  title: 'E-Mail-Check | email-checken.de',
-  description: 'Kostenloser E-Mail-Sicherheitscheck: SPF, DKIM, DMARC, Blacklist-Prüfung und mehr – sofort und ohne Anmeldung.',
-  metadataBase: new URL('https://email-checken.de'),
-  alternates: { canonical: 'https://email-checken.de' },
+  title: 'E-Mail-Sicherheitscheck: SPF, DKIM, DMARC prüfen | email-checken.de',
+  description: 'Kostenloser E-Mail-Sicherheitscheck: SPF, DKIM, DMARC, Blacklists, MX und mehr – sofort und ohne Anmeldung.',
+  metadataBase: new URL(SITE),
+  icons: { icon: '/favicon.svg' },
   openGraph: {
-    title: 'E-Mail-Check | email-checken.de',
-    description: 'SPF, DKIM, DMARC, Blacklists – Ihre Domain sofort prüfen.',
-    url: 'https://email-checken.de',
+    title: 'E-Mail-Sicherheitscheck | email-checken.de',
+    description: 'SPF, DKIM, DMARC, Blacklists – prüfen Sie Ihre Domain sofort und kostenlos.',
+    url: `${SITE}/`,
+    siteName: 'email-checken.de',
     type: 'website',
     locale: 'de_DE',
   },

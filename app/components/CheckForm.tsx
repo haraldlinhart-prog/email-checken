@@ -36,10 +36,10 @@ const T = {
     checkError: 'Fehler beim Check',
     unknownError: 'Unbekannter Fehler',
     step1: '🔖 Schritt 1: Siegel auf Ihrer Website einbinden',
-    badgeIntro: 'Binden Sie dieses Siegel jetzt ein – es zeigt Ihren Besuchern, dass Ihre E-Mails sicher konfiguriert sind. Es aktualisiert sich automatisch alle 14 Tage.',
-    badgeAlt: 'E-Mail Sicherheits-Siegel',
-    codeLabel: 'Einbettungs-Code (kopieren & auf Ihrer Website einfügen):',
-    embedAlt: 'E-Mail Sicherheit geprüft',
+    badgeIntro: 'Binden Sie dieses Siegel jetzt ein – es zeigt Ihren Besuchern den aktuellen Sicherheitsstatus Ihrer E-Mail-Domain und aktualisiert sich automatisch etwa alle 14 Tage.',
+    badgeAlt: 'E-Mail-Sicherheitssiegel',
+    codeLabel: 'Einbettungscode (kopieren und auf Ihrer Website einfügen):',
+    embedAlt: 'E-Mail-Sicherheit geprüft',
     copied: '✓ Kopiert',
     copy: 'Kopieren',
     loadingResults: 'Lade Ergebnisse…',
@@ -55,9 +55,9 @@ const T = {
     checkError: 'The check failed',
     unknownError: 'Unknown error',
     step1: '🔖 Step 1: Add the badge to your website',
-    badgeIntro: 'Add this badge to your website now – it shows your visitors that your email is configured securely. It updates automatically every 14 days.',
+    badgeIntro: 'Add this badge to your website now – it shows your visitors the current security status of your email domain and updates automatically about every 14 days.',
     badgeAlt: 'Email security badge',
-    codeLabel: 'Embed code (copy & paste it into your website):',
+    codeLabel: 'Embed code (copy it and paste it into your website):',
     embedAlt: 'Email security verified',
     copied: '✓ Copied',
     copy: 'Copy',
@@ -86,7 +86,7 @@ export default function CheckForm({ lang = 'de' }: { lang?: Lang }) {
 
   function badgeUrl(d: string, extra: string) {
     const q = [t.badgeQuery, extra].filter(Boolean).join('&')
-    return `https://email-checken.de/badge/${d}${q ? `?${q}` : ''}`
+    return `https://www.email-checken.de/badge/${d}${q ? `?${q}` : ''}`
   }
 
   function copyEmbedCode(code: string) {
@@ -122,8 +122,10 @@ export default function CheckForm({ lang = 'de' }: { lang?: Lang }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const d = domain.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '').replace(/^.*@/, '').toLowerCase()
+    let d = domain.trim().replace(/^https?:\/\//i, '').replace(/[/?#].*$/, '').replace(/^.*@/, '').replace(/\.$/, '').toLowerCase()
     if (!d) return
+    // Internationalized domains (e.g. müller.de) are checked in their punycode form.
+    try { d = new URL(`http://${d}`).hostname } catch { /* the API reports invalid input */ }
     setLoading(true)
     setData(null)
     setError('')

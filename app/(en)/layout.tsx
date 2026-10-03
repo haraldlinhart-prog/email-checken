@@ -1,24 +1,24 @@
 import type { Metadata } from 'next'
 import Script from 'next/script'
-import './globals.css'
+import '../globals.css'
 
 export const metadata: Metadata = {
-  title: 'E-Mail-Check | email-checken.de',
-  description: 'Kostenloser E-Mail-Sicherheitscheck: SPF, DKIM, DMARC, Blacklist-Prüfung und mehr – sofort und ohne Anmeldung.',
+  title: 'Email Security Check | email-checken.de',
+  description: 'Free email security check: SPF, DKIM, DMARC, blacklists and more – instant results, no sign-up required.',
   metadataBase: new URL('https://email-checken.de'),
-  alternates: { canonical: 'https://email-checken.de' },
   openGraph: {
-    title: 'E-Mail-Check | email-checken.de',
-    description: 'SPF, DKIM, DMARC, Blacklists – Ihre Domain sofort prüfen.',
-    url: 'https://email-checken.de',
+    title: 'Email Security Check | email-checken.de',
+    description: 'SPF, DKIM, DMARC, blacklists – check your domain in seconds.',
+    url: 'https://email-checken.de/en',
     type: 'website',
-    locale: 'de_DE',
+    locale: 'en_US',
+    alternateLocale: ['de_DE'],
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function EnglishRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="de">
+    <html lang="en">
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-CM1N75FRDN"

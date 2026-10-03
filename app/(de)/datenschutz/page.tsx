@@ -1,10 +1,12 @@
+import LangSwitch from '../../components/LangSwitch'
+
 export default function DatenschutzPage() {
   return (
     <>
       <header>
         <div className="inner">
           <a href="/" className="logo">📧 email-checken.de</a>
-          <nav><a href="/kontakt">Kontakt</a></nav>
+          <nav><a href="/kontakt">Kontakt</a><LangSwitch current="de" de="/datenschutz" en="/en" /></nav>
         </div>
       </header>
       <main className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem', maxWidth: '680px' }}>

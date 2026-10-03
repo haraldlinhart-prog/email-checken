@@ -10,7 +10,16 @@ const COLORS = {
   gray:   { bg: '#6b7280', label: 'NICHT GEPRÜFT',   sub: 'Noch kein Check durchgeführt' },
 }
 
-export async function GET(_req: Request, { params }: { params: { domain: string } }) {
+// English badge texts (?lang=en), used by the embed code on /en
+const LABELS_EN: Record<keyof typeof COLORS, string> = {
+  green: 'VERIFIED ✓',
+  yellow: 'PARTIALLY OK',
+  red: 'SECURITY ISSUE',
+  gray: 'NOT CHECKED',
+}
+
+export async function GET(req: Request, { params }: { params: { domain: string } }) {
+  const en = new URL(req.url).searchParams.get('lang') === 'en'
   const domain = params.domain.toLowerCase().replace(/^www\./, '')
   let score = 0
   let lastChecked = ''
@@ -31,9 +40,11 @@ export async function GET(_req: Request, { params }: { params: { domain: string 
     } catch { /* non-fatal */ }
   }
 
-  const { bg, label, sub } = COLORS[colorKey]
-  const scoreText = score > 0 ? `Score: ${score}/100` : 'noch kein Check'
-  const dateText = lastChecked ? ` · geprüft: ${lastChecked}` : ''
+  const { bg, label: labelDe, sub } = COLORS[colorKey]
+  const label = en ? LABELS_EN[colorKey] : labelDe
+  const heading = en ? 'EMAIL SECURITY' : 'E-MAIL SICHERHEIT'
+  const scoreText = score > 0 ? `Score: ${score}/100` : (en ? 'not checked yet' : 'noch kein Check')
+  const dateText = lastChecked ? (en ? ` · checked: ${lastChecked}` : ` · geprüft: ${lastChecked}`) : ''
 
   // Ampel-Kreis links
   const circleColor = colorKey === 'gray' ? '#9ca3af' : bg
@@ -47,12 +58,12 @@ export async function GET(_req: Request, { params }: { params: { domain: string 
   <!-- divider -->
   <line x1="54" y1="10" x2="54" y2="50" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
   <!-- texts -->
-  <text x="138" y="20" font-family="-apple-system,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.75)" text-anchor="middle" letter-spacing="1">E-MAIL SICHERHEIT</text>
+  <text x="138" y="20" font-family="-apple-system,sans-serif" font-size="9" font-weight="600" fill="rgba(255,255,255,0.75)" text-anchor="middle" letter-spacing="1">${heading}</text>
   <text x="138" y="37" font-family="-apple-system,sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">${label}</text>
   <text x="138" y="52" font-family="-apple-system,sans-serif" font-size="8" fill="rgba(255,255,255,0.65)" text-anchor="middle">${scoreText}${dateText}</text>
 </svg>`
 
-  const etag = `"${colorKey}-${score}-${lastChecked || 'gray'}"`
+  const etag = `"${colorKey}-${score}-${lastChecked || 'gray'}${en ? '-en' : ''}"`
   const lastModified = lastChecked ? new Date(lastChecked).toUTCString() : new Date(0).toUTCString()
 
   return new Response(svg, {

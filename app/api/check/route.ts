@@ -15,11 +15,41 @@ const DNSBL_LIST = [
 // Common DKIM selectors to try
 const DKIM_SELECTORS = ['default', 'google', 'mail', 'k1', 'selector1', 'selector2', 'dkim', 's1', 's2']
 
+type Lang = 'de' | 'en'
+
 interface CheckResult {
   id: string
   label: string
   status: 'pass' | 'fail' | 'warn'
   detail: string
+}
+
+// Every check produces its texts in both languages. German is what gets stored
+// in Supabase (unchanged behaviour); English is only returned to the /en UI.
+interface BiResult {
+  id: string
+  status: 'pass' | 'fail' | 'warn'
+  label: Record<Lang, string>
+  detail: Record<Lang, string>
+}
+
+function res(id: string, status: BiResult['status'], label: Record<Lang, string>, de: string, en: string): BiResult {
+  return { id, status, label, detail: { de, en } }
+}
+
+function pick(results: BiResult[], lang: Lang): CheckResult[] {
+  return results.map(r => ({ id: r.id, label: r.label[lang], status: r.status, detail: r.detail[lang] }))
+}
+
+const L = {
+  spf: { de: 'SPF-Record', en: 'SPF record' },
+  dmarc: { de: 'DMARC-Record', en: 'DMARC record' },
+  dkim: { de: 'DKIM-Signatur', en: 'DKIM signature' },
+  mx: { de: 'MX-Records', en: 'MX records' },
+  blacklist: { de: 'Blacklist-Check', en: 'Blacklist check' },
+  ptr: { de: 'Reverse DNS (PTR)', en: 'Reverse DNS (PTR)' },
+  mtasts: { de: 'MTA-STS', en: 'MTA-STS' },
+  tlsrpt: { de: 'TLS-Reporting (TLSRPT)', en: 'TLS reporting (TLSRPT)' },
 }
 
 async function dnsQuery(name: string, type: string): Promise<string[]> {
@@ -36,129 +66,169 @@ async function dnsQuery(name: string, type: string): Promise<string[]> {
   }
 }
 
-async function checkSPF(domain: string): Promise<CheckResult> {
+async function checkSPF(domain: string): Promise<BiResult> {
   const records = await dnsQuery(domain, 'TXT')
   const spf = records.find(r => r.startsWith('v=spf1'))
   if (!spf) {
-    return { id: 'spf', label: 'SPF-Record', status: 'fail', detail: 'Kein SPF-Record gefunden. E-Mails können in Ihrem Namen gefälscht werden.' }
+    return res('spf', 'fail', L.spf,
+      'Kein SPF-Record gefunden. E-Mails können in Ihrem Namen gefälscht werden.',
+      'No SPF record found. Anyone can send forged email in your name.')
   }
   if (spf.includes('+all')) {
-    return { id: 'spf', label: 'SPF-Record', status: 'fail', detail: 'SPF mit "+all" gefunden – dies erlaubt jedem das Versenden! Bitte auf "-all" oder "~all" ändern.' }
+    return res('spf', 'fail', L.spf,
+      'SPF mit "+all" gefunden – dies erlaubt jedem das Versenden! Bitte auf "-all" oder "~all" ändern.',
+      'SPF record uses "+all" – this allows anyone to send email for your domain! Change it to "-all" or "~all".')
   }
   if (spf.includes('~all')) {
-    return { id: 'spf', label: 'SPF-Record', status: 'warn', detail: `SPF vorhanden, aber "~all" (SoftFail). Empfehlung: "-all" für harte Ablehnung. Record: ${spf.substring(0, 80)}` }
+    return res('spf', 'warn', L.spf,
+      `SPF vorhanden, aber "~all" (SoftFail). Empfehlung: "-all" für harte Ablehnung. Record: ${spf.substring(0, 80)}`,
+      `SPF is in place, but uses "~all" (soft fail). We recommend "-all" so unauthorized mail is rejected. Record: ${spf.substring(0, 80)}`)
   }
-  return { id: 'spf', label: 'SPF-Record', status: 'pass', detail: `SPF korrekt konfiguriert mit "-all". ${spf.substring(0, 80)}${spf.length > 80 ? '…' : ''}` }
+  const tail = `${spf.substring(0, 80)}${spf.length > 80 ? '…' : ''}`
+  return res('spf', 'pass', L.spf,
+    `SPF korrekt konfiguriert mit "-all". ${tail}`,
+    `SPF is configured correctly with "-all". ${tail}`)
 }
 
-async function checkDMARC(domain: string): Promise<CheckResult> {
+async function checkDMARC(domain: string): Promise<BiResult> {
   const records = await dnsQuery(`_dmarc.${domain}`, 'TXT')
   const dmarc = records.find(r => r.startsWith('v=DMARC1'))
   if (!dmarc) {
-    return { id: 'dmarc', label: 'DMARC-Record', status: 'fail', detail: 'Kein DMARC-Record gefunden. Ohne DMARC kein Schutz vor E-Mail-Spoofing.' }
+    return res('dmarc', 'fail', L.dmarc,
+      'Kein DMARC-Record gefunden. Ohne DMARC kein Schutz vor E-Mail-Spoofing.',
+      'No DMARC record found. Without DMARC, your domain has no protection against email spoofing.')
   }
   if (dmarc.includes('p=none')) {
-    return { id: 'dmarc', label: 'DMARC-Record', status: 'warn', detail: `DMARC vorhanden, aber Policy "none" schützt nicht aktiv. Empfehlung: p=quarantine oder p=reject. Record: ${dmarc.substring(0, 80)}` }
+    return res('dmarc', 'warn', L.dmarc,
+      `DMARC vorhanden, aber Policy "none" schützt nicht aktiv. Empfehlung: p=quarantine oder p=reject. Record: ${dmarc.substring(0, 80)}`,
+      `DMARC is in place, but the policy "none" doesn't actively protect you. We recommend p=quarantine or p=reject. Record: ${dmarc.substring(0, 80)}`)
   }
   const policy = dmarc.match(/p=(quarantine|reject)/)?.[1] || 'unknown'
-  return { id: 'dmarc', label: 'DMARC-Record', status: 'pass', detail: `DMARC aktiv mit Policy "${policy}". ${dmarc.substring(0, 80)}${dmarc.length > 80 ? '…' : ''}` }
+  const tail = `${dmarc.substring(0, 80)}${dmarc.length > 80 ? '…' : ''}`
+  return res('dmarc', 'pass', L.dmarc,
+    `DMARC aktiv mit Policy "${policy}". ${tail}`,
+    `DMARC is active with policy "${policy}". ${tail}`)
 }
 
-async function checkDKIM(domain: string): Promise<CheckResult> {
+async function checkDKIM(domain: string): Promise<BiResult> {
   for (const selector of DKIM_SELECTORS) {
     const records = await dnsQuery(`${selector}._domainkey.${domain}`, 'TXT')
     const dkim = records.find(r => r.includes('v=DKIM1') || r.includes('k=rsa') || r.includes('p='))
     if (dkim) {
-      return { id: 'dkim', label: 'DKIM-Signatur', status: 'pass', detail: `DKIM-Record gefunden (Selektor: ${selector}). Digitale Signatur ist konfiguriert.` }
+      return res('dkim', 'pass', L.dkim,
+        `DKIM-Record gefunden (Selektor: ${selector}). Digitale Signatur ist konfiguriert.`,
+        `DKIM record found (selector: ${selector}). Your digital signature is set up.`)
     }
   }
-  return { id: 'dkim', label: 'DKIM-Signatur', status: 'warn', detail: `Kein DKIM-Record bei gängigen Selektoren gefunden (${DKIM_SELECTORS.slice(0, 4).join(', ')}, …). Prüfen Sie Ihren Mail-Provider.` }
+  const sel = `${DKIM_SELECTORS.slice(0, 4).join(', ')}, …`
+  return res('dkim', 'warn', L.dkim,
+    `Kein DKIM-Record bei gängigen Selektoren gefunden (${sel}). Prüfen Sie Ihren Mail-Provider.`,
+    `No DKIM record found for common selectors (${sel}). Check the DKIM settings with your email provider.`)
 }
 
-async function checkMX(domain: string): Promise<{ result: CheckResult; mxIPs: string[] }> {
+async function checkMX(domain: string): Promise<{ result: BiResult; mxIPs: string[] }> {
   const records = await dnsQuery(domain, 'MX')
   const mxIPs: string[] = []
   if (!records.length) {
-    return { result: { id: 'mx', label: 'MX-Records', status: 'fail', detail: 'Keine MX-Records gefunden. Die Domain kann keine E-Mails empfangen.' }, mxIPs }
+    return {
+      result: res('mx', 'fail', L.mx,
+        'Keine MX-Records gefunden. Die Domain kann keine E-Mails empfangen.',
+        'No MX records found. This domain cannot receive email.'),
+      mxIPs,
+    }
   }
   // Resolve first MX to IP
   const firstMX = records[0].replace(/^\d+\s+/, '').replace(/\.$/, '')
   const aRecords = await dnsQuery(firstMX, 'A')
   if (aRecords.length) mxIPs.push(...aRecords.slice(0, 2))
+  const list = records.slice(0, 2).map(r => r.replace(/^\d+\s+/, '')).join(', ')
+  const more = records.length - 2
   return {
-    result: { id: 'mx', label: 'MX-Records', status: 'pass', detail: `${records.length} MX-Record(s) gefunden: ${records.slice(0, 2).map(r => r.replace(/^\d+\s+/, '')).join(', ')}${records.length > 2 ? ` (+${records.length - 2} weitere)` : ''}` },
-    mxIPs
+    result: res('mx', 'pass', L.mx,
+      `${records.length} MX-Record(s) gefunden: ${list}${more > 0 ? ` (+${more} weitere)` : ''}`,
+      `${records.length} MX record${records.length === 1 ? '' : 's'} found: ${list}${more > 0 ? ` (+${more} more)` : ''}`),
+    mxIPs,
   }
 }
 
-async function checkBlacklists(domain: string, mxIPs: string[]): Promise<CheckResult> {
+async function checkBlacklists(domain: string, mxIPs: string[]): Promise<BiResult> {
   const toCheck = mxIPs.slice(0, 2) // only check first 2 MX IPs
 
   if (!toCheck.length) {
-    return { id: 'blacklist', label: 'Blacklist-Check', status: 'warn', detail: 'Konnte keine MX-IP-Adressen auflösen für den Blacklist-Check.' }
+    return res('blacklist', 'warn', L.blacklist,
+      'Konnte keine MX-IP-Adressen auflösen für den Blacklist-Check.',
+      'Could not resolve any MX IP addresses for the blacklist check.')
   }
 
-  const listed: string[] = []
+  const listed: { ip: string; bl: string }[] = []
 
   for (const ip of toCheck) {
     const parts = ip.split('.').reverse().join('.')
     for (const bl of DNSBL_LIST) {
       const lookup = `${parts}.${bl}`
-      const res = await dnsQuery(lookup, 'A')
+      const r = await dnsQuery(lookup, 'A')
       // Valid DNSBL hits return 127.0.0.x (x=2-11); 127.255.255.254 = query error, not a listing
-      const realHit = res.some(r => r.startsWith('127.') && r !== '127.255.255.254' && r !== '127.255.255.255')
+      const realHit = r.some(x => x.startsWith('127.') && x !== '127.255.255.254' && x !== '127.255.255.255')
       if (realHit) {
-        listed.push(`${ip} auf ${bl}`)
+        listed.push({ ip, bl })
       }
     }
   }
 
   if (listed.length) {
-    return {
-      id: 'blacklist',
-      label: 'Blacklist-Check',
-      status: 'fail',
-      detail: `⛔ Domain-IP auf ${listed.length} Blockliste(n) gefunden: ${listed.join('; ')}`
-    }
+    return res('blacklist', 'fail', L.blacklist,
+      `⛔ Domain-IP auf ${listed.length} Blockliste(n) gefunden: ${listed.map(l => `${l.ip} auf ${l.bl}`).join('; ')}`,
+      `⛔ Mail server IP found on ${listed.length} blocklist${listed.length === 1 ? '' : 's'}: ${listed.map(l => `${l.ip} on ${l.bl}`).join('; ')}`)
   }
 
-  return {
-    id: 'blacklist',
-    label: 'Blacklist-Check',
-    status: 'pass',
-    detail: `Keine Einträge auf ${DNSBL_LIST.length} geprüften Blocklisten (Spamhaus, SpamCop, SORBS, Barracuda, UCEPROTECT).`
-  }
+  return res('blacklist', 'pass', L.blacklist,
+    `Keine Einträge auf ${DNSBL_LIST.length} geprüften Blocklisten (Spamhaus, SpamCop, SORBS, Barracuda, UCEPROTECT).`,
+    `Not listed on any of the ${DNSBL_LIST.length} blocklists checked (Spamhaus, SpamCop, SORBS, Barracuda, UCEPROTECT).`)
 }
 
-async function checkPTR(mxIPs: string[]): Promise<CheckResult> {
+async function checkPTR(mxIPs: string[]): Promise<BiResult> {
   if (!mxIPs.length) {
-    return { id: 'ptr', label: 'Reverse DNS (PTR)', status: 'warn', detail: 'Keine MX-IP verfügbar für PTR-Prüfung.' }
+    return res('ptr', 'warn', L.ptr,
+      'Keine MX-IP verfügbar für PTR-Prüfung.',
+      'No MX IP address available for the PTR check.')
   }
   const ip = mxIPs[0]
   const reverse = ip.split('.').reverse().join('.') + '.in-addr.arpa'
   const ptr = await dnsQuery(reverse, 'PTR')
   if (!ptr.length) {
-    return { id: 'ptr', label: 'Reverse DNS (PTR)', status: 'warn', detail: `Kein PTR-Record für ${ip}. Viele Mailserver lehnen E-Mails ohne Reverse DNS ab.` }
+    return res('ptr', 'warn', L.ptr,
+      `Kein PTR-Record für ${ip}. Viele Mailserver lehnen E-Mails ohne Reverse DNS ab.`,
+      `No PTR record for ${ip}. Many mail servers reject email from servers without reverse DNS.`)
   }
-  return { id: 'ptr', label: 'Reverse DNS (PTR)', status: 'pass', detail: `PTR-Record für ${ip}: ${ptr[0]}` }
+  return res('ptr', 'pass', L.ptr,
+    `PTR-Record für ${ip}: ${ptr[0]}`,
+    `PTR record for ${ip}: ${ptr[0]}`)
 }
 
-async function checkMTASTS(domain: string): Promise<CheckResult> {
+async function checkMTASTS(domain: string): Promise<BiResult> {
   const records = await dnsQuery(`_mta-sts.${domain}`, 'TXT')
   const mtasts = records.find(r => r.startsWith('v=STSv1'))
   if (!mtasts) {
-    return { id: 'mtasts', label: 'MTA-STS', status: 'warn', detail: 'Kein MTA-STS-Record gefunden. MTA-STS erzwingt verschlüsselte E-Mail-Übertragung.' }
+    return res('mtasts', 'warn', L.mtasts,
+      'Kein MTA-STS-Record gefunden. MTA-STS erzwingt verschlüsselte E-Mail-Übertragung.',
+      'No MTA-STS record found. MTA-STS enforces encrypted email delivery to your domain.')
   }
-  return { id: 'mtasts', label: 'MTA-STS', status: 'pass', detail: `MTA-STS konfiguriert: ${mtasts}` }
+  return res('mtasts', 'pass', L.mtasts,
+    `MTA-STS konfiguriert: ${mtasts}`,
+    `MTA-STS is configured: ${mtasts}`)
 }
 
-async function checkTLSRPT(domain: string): Promise<CheckResult> {
+async function checkTLSRPT(domain: string): Promise<BiResult> {
   const records = await dnsQuery(`_smtp._tls.${domain}`, 'TXT')
   const tlsrpt = records.find(r => r.startsWith('v=TLSRPTv1'))
   if (!tlsrpt) {
-    return { id: 'tlsrpt', label: 'TLS-Reporting (TLSRPT)', status: 'warn', detail: 'Kein TLSRPT-Record. TLS-Reporting informiert Sie über Zustellungsfehler.' }
+    return res('tlsrpt', 'warn', L.tlsrpt,
+      'Kein TLSRPT-Record. TLS-Reporting informiert Sie über Zustellungsfehler.',
+      'No TLSRPT record. TLS reporting notifies you about encrypted delivery failures.')
   }
-  return { id: 'tlsrpt', label: 'TLS-Reporting (TLSRPT)', status: 'pass', detail: `TLSRPT aktiv: ${tlsrpt}` }
+  return res('tlsrpt', 'pass', L.tlsrpt,
+    `TLSRPT aktiv: ${tlsrpt}`,
+    `TLSRPT is active: ${tlsrpt}`)
 }
 
 function calculateScore(results: CheckResult[]): number {
@@ -213,10 +283,11 @@ async function saveToSupabase(domain: string, score: number, results: CheckResul
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
+  const lang: Lang = url.searchParams.get('lang') === 'en' ? 'en' : 'de'
   const domain = url.searchParams.get('domain')?.toLowerCase().replace(/^www\./, '') || ''
 
   if (!domain || !/^[a-z0-9][a-z0-9.-]{1,61}[a-z0-9]\.[a-z]{2,}$/.test(domain)) {
-    return Response.json({ error: 'Ungültige Domain' }, { status: 400 })
+    return Response.json({ error: lang === 'en' ? 'Please enter a valid domain (e.g. example.com).' : 'Ungültige Domain' }, { status: 400 })
   }
 
   const [spf, dmarc, dkim, { result: mx, mxIPs }] = await Promise.all([
@@ -233,13 +304,20 @@ export async function GET(req: Request) {
     checkTLSRPT(domain),
   ])
 
-  const results = [spf, dmarc, dkim, mx, blacklist, ptr, mtasts, tlsrpt]
+  const bi = [spf, dmarc, dkim, mx, blacklist, ptr, mtasts, tlsrpt]
+  // Stored results stay German, exactly as before.
+  const results = pick(bi, 'de')
   const score = calculateScore(results)
 
   const color = badgeColor(results, score)
   await saveToSupabase(domain, score, results)
 
-  return Response.json({ domain, score, badge_color: color }, {
+  // German response is unchanged; English additionally carries the translated results.
+  const body = lang === 'en'
+    ? { domain, score, badge_color: color, results: pick(bi, 'en') }
+    : { domain, score, badge_color: color }
+
+  return Response.json(body, {
     headers: { 'Cache-Control': 'public, max-age=300' }
   })
 }

@@ -1,4 +1,11 @@
-import ContactForm from './ContactForm'
+import type { Metadata } from 'next'
+import ContactForm from '../../components/ContactForm'
+import LangSwitch from '../../components/LangSwitch'
+import { alternates } from '../../components/i18n'
+
+export const metadata: Metadata = {
+  alternates: alternates('de', '/kontakt', '/en/contact'),
+}
 
 export default function KontaktPage() {
   return (
@@ -6,7 +13,7 @@ export default function KontaktPage() {
       <header>
         <div className="inner">
           <a href="/" className="logo">📧 email-checken.de</a>
-          <nav><a href="/datenschutz">Datenschutz</a></nav>
+          <nav><a href="/datenschutz">Datenschutz</a><LangSwitch current="de" de="/kontakt" en="/en/contact" /></nav>
         </div>
       </header>
       <main className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>

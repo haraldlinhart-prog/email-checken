@@ -59,6 +59,48 @@ header nav a {
 
 header nav a:hover { color: var(--fg); }
 
+header nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: 1.25rem;
+  padding: 0.15rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.lang-switch strong { color: var(--accent); font-weight: 700; }
+header nav .lang-switch a { margin-left: 0; font-size: 0.8rem; font-weight: 600; }
+
+/* Mobile: let the header wrap instead of overflowing */
+@media (max-width: 600px) {
+  header .inner { flex-wrap: wrap; row-gap: 0.5rem; padding: 0 1rem; }
+  header nav { width: 100%; justify-content: flex-start; row-gap: 0.35rem; }
+  header nav > a { margin-left: 0; margin-right: 1rem; }
+  header nav .lang-switch { margin-left: auto; }
+  .container { padding: 0 1rem; }
+  .check-form { padding: 1rem; }
+  .badge-section { padding: 1rem; }
+  .input-row input { min-width: 0; }
+  .badge-code-row { flex-direction: column; }
+  .btn-copy { align-self: flex-start; }
+}
+
+/* Long DNS records / hostnames must never widen the page */
+.result-item .result-text { min-width: 0; flex: 1; }
+.result-item .detail, .result-item .label, .score-label, .hint { overflow-wrap: anywhere; }
+.badge-code { min-width: 0; overflow-wrap: anywhere; }
+.badge-preview img { max-width: 100%; height: auto; }
+
 .hero {
   text-align: center;
   padding: 3rem 0 2rem;

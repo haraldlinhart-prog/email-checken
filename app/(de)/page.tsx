@@ -1,5 +1,12 @@
-import CheckForm from './CheckForm'
-import ImpressumWidget from './ImpressumWidget'
+import type { Metadata } from 'next'
+import CheckForm from '../components/CheckForm'
+import ImpressumWidget from '../components/ImpressumWidget'
+import LangSwitch from '../components/LangSwitch'
+import { alternates } from '../components/i18n'
+
+export const metadata: Metadata = {
+  alternates: alternates('de', '/', '/en'),
+}
 
 export default function Home() {
   return (
@@ -11,6 +18,7 @@ export default function Home() {
             <a href="/blog">Blog</a>
             <a href="/datenschutz">Datenschutz</a>
             <a href="/kontakt">Kontakt</a>
+            <LangSwitch current="de" de="/" en="/en" />
           </nav>
         </div>
       </header>

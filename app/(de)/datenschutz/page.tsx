@@ -1,3 +1,4 @@
+import ImpressumWidget from '../../components/ImpressumWidget'
 import LangSwitch from '../../components/LangSwitch'
 
 export default function DatenschutzPage() {
@@ -44,6 +45,7 @@ export default function DatenschutzPage() {
       <footer>
         <div className="container">
           <p>© {new Date().getFullYear()} email-checken.de · <a href="/">Startseite</a></p>
+          <div style={{ marginTop: '0.75rem' }}><ImpressumWidget /></div>
         </div>
       </footer>
     </>

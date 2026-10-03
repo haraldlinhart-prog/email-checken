@@ -72,9 +72,9 @@ export default function Home() {
             <a href="/kontakt">Kontakt</a> ·{' '}
             <a href="/blog">Blog</a>
           </p>
+          <div style={{ marginTop: '0.75rem' }}><ImpressumWidget /></div>
         </div>
       </footer>
-      <ImpressumWidget />
     </>
   )
 }

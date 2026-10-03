@@ -1,3 +1,4 @@
+import ImpressumWidget from '../../../components/ImpressumWidget'
 import type { Metadata } from 'next'
 import ContactForm from '../../../components/ContactForm'
 import LangSwitch from '../../../components/LangSwitch'
@@ -36,6 +37,7 @@ export default function ContactPageEn() {
       <footer>
         <div className="container">
           <p>© {new Date().getFullYear()} email-checken.de · <a href="/en">Home</a> · <a href="/datenschutz" hrefLang="de">Privacy policy (German)</a></p>
+          <div style={{ marginTop: '0.75rem' }}><ImpressumWidget lang="en" /></div>
         </div>
       </footer>
     </>

@@ -70,9 +70,9 @@ export default function HomeEn() {
             <a href="/en/contact">Contact</a> ·{' '}
             <a href="/datenschutz" hrefLang="de">Privacy policy (German)</a>
           </p>
+          <div style={{ marginTop: '0.75rem' }}><ImpressumWidget lang="en" /></div>
         </div>
       </footer>
-      <ImpressumWidget />
     </>
   )
 }

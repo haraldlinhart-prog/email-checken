@@ -27,6 +27,9 @@ body {
   line-height: 1.6;
 }
 
+/* Form controls don't inherit the page font by default (textarea would be monospace) */
+input, select, textarea, button { font-family: inherit; }
+
 .container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
 
 header {
@@ -112,7 +115,7 @@ header nav .lang-switch a { margin-left: 0; font-size: 0.8rem; font-weight: 600;
   margin-bottom: 0.75rem;
 }
 
-.hero p {
+.hero > p {
   color: var(--muted);
   font-size: 1.05rem;
   max-width: 520px;
@@ -175,6 +178,7 @@ header nav .lang-switch a { margin-left: 0; font-size: 0.8rem; font-weight: 600;
 }
 
 .result-item {
+  text-align: left;
   display: flex;
   align-items: flex-start;
   gap: 0.75rem;
@@ -271,6 +275,7 @@ header nav .lang-switch a { margin-left: 0; font-size: 0.8rem; font-weight: 600;
   background: #16a34a;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
+  white-space: normal; /* long label must wrap on phones */
 }
 .btn-installed:hover { background: #15803d; }
 
@@ -331,9 +336,9 @@ footer .footer-legal .if-siegel { width: 120px; height: 120px; }
 
 /* 404 page */
 .not-found { text-align: center; padding-top: 4rem; padding-bottom: 4rem; }
-.not-found-code { font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 0.75rem; }
+.not-found .not-found-code { font-size: 4rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: 0.75rem; }
 .not-found h1 { font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 0.75rem; }
-.not-found p { color: var(--muted); max-width: 520px; margin: 0 auto 1.75rem; }
+.not-found p:not(.not-found-code) { color: var(--muted); max-width: 520px; margin: 0 auto 1.75rem; }
 .not-found .btn { display: inline-block; text-decoration: none; }
 
 .loading-dots::after {

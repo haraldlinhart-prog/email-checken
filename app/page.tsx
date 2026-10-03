@@ -8,6 +8,7 @@ export default function Home() {
         <div className="inner">
           <a href="/" className="logo">📧 email-checken.de</a>
           <nav>
+            <a href="/blog">Blog</a>
             <a href="/datenschutz">Datenschutz</a>
             <a href="/kontakt">Kontakt</a>
           </nav>
@@ -60,7 +61,8 @@ export default function Home() {
           <p>© {new Date().getFullYear()} email-checken.de · Ein Service von PAN21.com International LLC</p>
           <p style={{ marginTop: '0.25rem' }}>
             <a href="/datenschutz">Datenschutz</a> ·{' '}
-            <a href="/kontakt">Kontakt</a>
+            <a href="/kontakt">Kontakt</a> ·{' '}
+            <a href="/blog">Blog</a>
           </p>
         </div>
       </footer>

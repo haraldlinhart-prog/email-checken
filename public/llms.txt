@@ -1,0 +1,40 @@
+# email-checken.de
+
+> email-checken.de ist ein kostenloser E-Mail-Sicherheitscheck für Domains. Nach Eingabe einer Domain oder E-Mail-Adresse liest der Dienst die öffentlichen DNS-Einträge und bewertet SPF, DKIM, DMARC, MX-Records, Blacklist-Einträge, Reverse DNS (PTR), MTA-STS und TLS-Reporting mit einem Score von 0 bis 100. Keine Anmeldung nötig. Betreiber: PAN21.com International LLC.
+
+## Kernfunktionen
+
+- SPF-Prüfung: Existiert genau ein SPF-Record, und wie endet er („-all“, „~all“, „?all“ oder „+all“)?
+- DMARC-Prüfung: Gibt es einen Eintrag unter _dmarc, und welche Policy gilt (none, quarantine oder reject)?
+- DKIM-Prüfung: Suche nach einem DKIM-Schlüssel unter gängigen Selektoren (default, google, mail, k1, selector1, selector2, dkim, s1, s2).
+- MX-Records: Sind Mail-Server eingetragen, und lässt sich der primäre Mail-Server auflösen?
+- Blacklist-Check: Abfrage der IP-Adressen des primären Mail-Servers bei fünf DNS-Blocklisten (SpamCop, Barracuda, UCEPROTECT, PSBL, Mailspike).
+- Reverse DNS: Hat die IP-Adresse des primären Mail-Servers einen PTR-Eintrag?
+- MTA-STS und TLS-Reporting (TLSRPT): Sind die zugehörigen DNS-Einträge vorhanden?
+- Score von 0 bis 100 mit Hinweisen zu jedem Prüfpunkt (Gewichtung: SPF 25, DMARC 25, DKIM 20, MX 10, Blacklists 10, Reverse DNS 5, MTA-STS 3, TLS-Reporting 2).
+- Siegel zum Einbinden auf der eigenen Website; geprüfte Domains werden etwa alle 14 Tage automatisch erneut geprüft.
+- Oberfläche auf Deutsch und Englisch.
+
+## Zielgruppe
+
+- Unternehmen, Selbstständige, Vereine und Agenturen, die E-Mails über eine eigene Domain versenden
+- Webmaster und IT-Verantwortliche, die nach einem Wechsel des Mail-Providers die DNS-Einstellungen kontrollieren möchten
+- Alle, die wissen möchten, ob ihre Domain gegen E-Mail-Spoofing und Phishing in ihrem Namen abgesichert ist
+
+## Wichtige Seiten
+
+- [Startseite mit E-Mail-Sicherheitscheck (Deutsch)](https://www.email-checken.de/)
+- [Email security check (English)](https://www.email-checken.de/en)
+- [Kontakt](https://www.email-checken.de/kontakt)
+- [Contact (English)](https://www.email-checken.de/en/contact)
+- [News und Artikel](https://www.email-checken.de/blog)
+- [SPF prüfen: So überprüfen Sie Ihren SPF-Eintrag richtig](https://www.email-checken.de/blog/spf-prufen-so-uberprufen-sie-ihren-spf-eintrag-richtig)
+- [Datenschutzerklärung](https://www.email-checken.de/datenschutz)
+
+## Hinweis
+
+Der Check liest ausschließlich öffentliche DNS-Einträge; es werden keine E-Mails versendet und keine Postfächer abgerufen. Ein hoher Score zeigt, dass die wichtigsten DNS-Einstellungen stimmen, ist aber keine Zusage, dass E-Mails zugestellt werden – das hängt auch von Inhalt, Versandverhalten und den Filtern der Empfänger ab. DKIM wird nur unter gängigen Selektoren gesucht; ein abweichender Selektor kann zu einer Warnung führen, obwohl DKIM eingerichtet ist. Für das Siegel speichert der Dienst Domain, Ergebnis und Prüfzeitpunkt.
+
+## English summary
+
+email-checken.de is a free email security check for domains, operated by PAN21.com International LLC. Enter a domain or email address and it reads the domain's public DNS records to assess SPF, DKIM, DMARC, MX records, blacklist status (five DNSBLs), reverse DNS (PTR), MTA-STS and TLS reporting, with a score from 0 to 100 and a recommendation for each item. No sign-up required. English version: https://www.email-checken.de/en

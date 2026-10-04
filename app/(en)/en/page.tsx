@@ -3,8 +3,10 @@ import CheckForm from '../../components/CheckForm'
 import SiteHeader from '../../components/SiteHeader'
 import SiteFooter from '../../components/SiteFooter'
 import { alternates } from '../../components/i18n'
+import HomeInfo, { HOME_DESCRIPTION } from '../../components/HomeInfo'
 
 export const metadata: Metadata = {
+  description: HOME_DESCRIPTION.en,
   alternates: alternates('en', '/', '/en'),
 }
 
@@ -52,6 +54,7 @@ export default function HomeEn() {
             <p>The PTR record of your primary mail server – essential for reliable email delivery.</p>
           </div>
         </div>
+        <HomeInfo lang="en" />
       </main>
 
       <SiteFooter lang="en" />

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Script from 'next/script'
 import '../globals.css'
 import { SITE } from '../components/i18n'
 
@@ -23,20 +22,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
-      <head>
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-CM1N75FRDN"
-          strategy="afterInteractive"
-        />
-        <Script id="gtag-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-CM1N75FRDN');
-          `}
-        </Script>
-      </head>
       <body>{children}</body>
     </html>
   )

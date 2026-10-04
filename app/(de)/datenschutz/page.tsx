@@ -5,7 +5,7 @@ import { SITE } from '../../components/i18n'
 
 export const metadata: Metadata = {
   title: 'Datenschutzerklärung | email-checken.de',
-  description: 'Datenschutzerklärung von email-checken.de: welche Daten beim E-Mail-Sicherheitscheck, beim Kontaktformular und bei der Webanalyse verarbeitet werden.',
+  description: 'Datenschutzerklärung von email-checken.de: welche Daten beim E-Mail-Sicherheitscheck und beim Kontaktformular verarbeitet werden.',
   alternates: { canonical: `${SITE}/datenschutz` },
   openGraph: {
     title: 'Datenschutzerklärung | email-checken.de',
@@ -60,18 +60,7 @@ export default function DatenschutzPage() {
           Ihrer Anfrage).
         </p>
 
-        <h2>5. Webanalyse mit Google Analytics</h2>
-        <p>
-          Diese Website nutzt Google Analytics 4, einen Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street,
-          Dublin 4, Irland. Google Analytics setzt Cookies (z. B. „_ga“) und erfasst pseudonyme Nutzungsdaten wie aufgerufene Seiten,
-          Verweildauer, ungefähren Standort sowie Geräte- und Browserinformationen. IP-Adressen werden von Google Analytics 4 nach
-          Angaben von Google nicht gespeichert. Eine Übermittlung an Google LLC in den USA ist möglich; Google ist unter dem
-          EU-US Data Privacy Framework zertifiziert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der
-          Reichweitenmessung). Sie können der Erfassung widersprechen, indem Sie Cookies in Ihrem Browser blockieren oder das
-          Browser-Add-on von Google zur Deaktivierung von Google Analytics verwenden.
-        </p>
-
-        <h2>6. Impressum-Widget</h2>
+        <h2>5. Impressum-Widget</h2>
         <p>
           Das Impressum im Seitenfuß wird über ein Widget von impressum-free.de geladen. Dabei ruft Ihr Browser Skript, Text und
           Siegelgrafik von den Servern von impressum-free.de ab; technisch bedingt wird dabei Ihre IP-Adresse übertragen. Es werden
@@ -79,13 +68,12 @@ export default function DatenschutzPage() {
           Anbieterkennzeichnung).
         </p>
 
-        <h2>7. Dienstleister im Überblick</h2>
+        <h2>6. Dienstleister im Überblick</h2>
         <ul>
           <li><strong>Vercel Inc.</strong> – Hosting (USA)</li>
           <li><strong>Supabase, Inc.</strong> – Datenbank (Serverstandort Frankfurt am Main)</li>
           <li><strong>Resend</strong> – Zustellung der Kontaktanfragen (USA)</li>
           <li><strong>Cloudflare, Inc.</strong> – DNS-Abfragen für den Check (keine personenbezogenen Daten)</li>
-          <li><strong>Google Ireland Limited</strong> – Webanalyse (Google Analytics 4)</li>
           <li><strong>impressum-free.de</strong> – Impressum-Widget</li>
         </ul>
         <p>
@@ -93,7 +81,7 @@ export default function DatenschutzPage() {
           EU-Standardvertragsklauseln.
         </p>
 
-        <h2>8. Ihre Rechte</h2>
+        <h2>7. Ihre Rechte</h2>
         <p>
           Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit sowie
           Widerspruch gegen Verarbeitungen auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wenden Sie sich dazu an

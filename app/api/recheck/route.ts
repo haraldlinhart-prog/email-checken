@@ -6,7 +6,8 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 const SUPABASE_URL = 'https://frbvsdumltlzisddrlbi.supabase.co'
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || ''
+// Serverseitig mit dem Service-Key; Anon-Key nur Übergang bis RLS aktiv ist.
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || ''
 const CHECK_BASE = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.email-checken.de'
 
 export async function GET(req: Request) {

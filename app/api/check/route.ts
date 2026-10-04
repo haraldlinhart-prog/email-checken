@@ -1,7 +1,8 @@
 export const runtime = 'edge'
 
 const SUPABASE_URL = 'https://frbvsdumltlzisddrlbi.supabase.co'
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || ''
+// Serverseitig mit dem Service-Key; Anon-Key nur Übergang bis RLS aktiv ist.
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || ''
 
 // DNSBLs to check (queried via DNS lookup pattern).
 // Only lists that actually answer queries from Cloudflare's public resolver:

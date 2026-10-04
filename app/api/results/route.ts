@@ -1,7 +1,8 @@
 export const runtime = 'edge'
 
 const SUPABASE_URL = 'https://frbvsdumltlzisddrlbi.supabase.co'
-const SUPABASE_KEY = process.env.SUPABASE_ANON_KEY || ''
+// Serverseitig mit dem Service-Key; Anon-Key nur Übergang bis RLS aktiv ist.
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_ANON_KEY || ''
 
 export async function GET(req: Request) {
   const params = new URL(req.url).searchParams

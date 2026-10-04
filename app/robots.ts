@@ -4,7 +4,7 @@ import { SITE } from './components/i18n'
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: { userAgent: '*', allow: '/', disallow: '/api/' },
-    sitemap: `${SITE}/sitemap.xml`,
+    sitemap: [`${SITE}/sitemap.xml`, `${SITE}/sitemap-blog.xml`],
     host: SITE,
   }
 }

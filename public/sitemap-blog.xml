@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.email-checken.de/blog/</loc>
-    <lastmod>2026-10-19</lastmod>
+    <lastmod>2026-10-20</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.email-checken.de/blog/e-mail-sicherheitscheck-schutzen-sie-ihre-digitale-kommunikation-mit-g/</loc>
+    <lastmod>2026-10-20</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.email-checken.de/blog/mx-record-prufen-fehlerfreier-e-mail-empfang-fur-ihre-domain/</loc>

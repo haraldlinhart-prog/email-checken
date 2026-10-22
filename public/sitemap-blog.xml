@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.email-checken.de/blog/</loc>
-    <lastmod>2026-10-21</lastmod>
+    <lastmod>2026-10-22</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.email-checken.de/blog/ptr-record-prufen-so-verbessern-sie-die-zustellrate-ihrer-e-mails/</loc>
+    <lastmod>2026-10-22</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.email-checken.de/blog/reverse-dns-prufen-verhindern-sie-dass-ihre-e-mails-im-spam-landen/</loc>

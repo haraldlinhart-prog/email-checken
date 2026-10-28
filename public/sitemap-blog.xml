@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.email-checken.de/blog/</loc>
-    <lastmod>2026-10-27</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.email-checken.de/blog/dkim-einrichten-schritt-fur-schritt-anleitung-fur-sichere-e-mail-authe/</loc>
+    <lastmod>2026-10-28</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.email-checken.de/blog/was-ist-dmarc-so-schutzen-sie-ihre-e-mails-mit-dem-sicherheitsstandard/</loc>

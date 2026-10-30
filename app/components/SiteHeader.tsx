@@ -1,4 +1,5 @@
 import LangSwitch from './LangSwitch'
+import SuchmaschinenBlogLink from './SuchmaschinenBlogLink';
 
 // Shared header for all pages. `de` / `en` are the paths of the equivalent
 // page in each language (used by the language switch).
@@ -20,6 +21,8 @@ export default function SiteHeader({ lang, de, en }: { lang: 'de' | 'en'; de: st
             </>
           )}
           <LangSwitch current={lang} de={de} en={en} />
+          {/* suchmaschinen.pro:blog-link */}
+          <SuchmaschinenBlogLink />
         </nav>
       </div>
     </header>

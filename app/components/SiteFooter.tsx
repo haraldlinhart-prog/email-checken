@@ -33,6 +33,12 @@ export default function SiteFooter({ lang }: { lang: 'de' | 'en' }) {
         <a href="https://www.german-quality.net/ref/3df83659d61ed26478" target="_blank" rel="noopener"><img src="https://www.german-quality.net/banner.svg" width="120" height="60" alt="German Quality" /></a>
         <a href="https://www.ffa-links.de/ref/43b1a66c480272221b" target="_blank" rel="noopener"><img src="https://www.ffa-links.de/banner.svg" width="120" height="60" alt="FFA-Links" /></a>
       </div>
+      {/* Tool-Badges: site-ok.de, kaputte-links.de, pagespeed-plus.de */}
+      <div style={{ display:"flex", justifyContent:"center", gap:"12px", flexWrap:"wrap", margin:"1rem 0 0" }}>
+        <a href="https://www.site-ok.de/status.html?key=jre9epmg8t" target="_blank" rel="noopener"><img src="https://www.site-ok.de/api/badge?key=jre9epmg8t" alt="Site-Status" width="320" height="80" /></a>
+        <a href="https://www.kaputte-links.de/status.html?key=adb5rs0dj4" target="_blank" rel="noopener"><img src="https://www.kaputte-links.de/api/badge?key=adb5rs0dj4" alt="Link-Status" width="320" height="80" /></a>
+        <a href="https://www.pagespeed-plus.de/status.html?key=dh27twsa8e" target="_blank" rel="noopener"><img src="https://www.pagespeed-plus.de/api/badge?key=dh27twsa8e" alt="PageSpeed Score" /></a>
+      </div>
     </footer>
   )
 }

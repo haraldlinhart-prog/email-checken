@@ -1,147 +1,147 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://www.email-checken.de/blog/</loc>
+    <loc>https://www.email-checken.de/blog</loc>
     <lastmod>2026-11-09</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/spf-record-einrichten-praktische-anleitung-fur-e-mail-absender/</loc>
+    <loc>https://www.email-checken.de/blog/spf-record-einrichten-praktische-anleitung-fur-e-mail-absender</loc>
     <lastmod>2026-11-09</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dmarc-report-auswerten-so-nutzen-sie-die-berichte-fur-mehr-e-mail-sich/</loc>
+    <loc>https://www.email-checken.de/blog/dmarc-report-auswerten-so-nutzen-sie-die-berichte-fur-mehr-e-mail-sich</loc>
     <lastmod>2026-11-08</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/google-workspace-dkim-einrichten-und-konfigurieren-praktischer-leitfad/</loc>
+    <loc>https://www.email-checken.de/blog/google-workspace-dkim-einrichten-und-konfigurieren-praktischer-leitfad</loc>
     <lastmod>2026-11-07</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-auf-spam-prufen-so-erkennen-sie-unerwunschte-nachrichten-zuverl/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-auf-spam-prufen-so-erkennen-sie-unerwunschte-nachrichten-zuverl</loc>
     <lastmod>2026-11-06</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dmarc-record-generator-authentifizierung-ihrer-e-mail-domain-in-wenige/</loc>
+    <loc>https://www.email-checken.de/blog/dmarc-record-generator-authentifizierung-ihrer-e-mail-domain-in-wenige</loc>
     <lastmod>2026-11-05</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/domainkeys-identified-mail-die-technische-grundlage-sicherer-e-mail-au/</loc>
+    <loc>https://www.email-checken.de/blog/domainkeys-identified-mail-die-technische-grundlage-sicherer-e-mail-au</loc>
     <lastmod>2026-11-04</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dkim-selector-die-schlusselkomponente-fur-zuverlassige-e-mail-authenti/</loc>
+    <loc>https://www.email-checken.de/blog/dkim-selector-die-schlusselkomponente-fur-zuverlassige-e-mail-authenti</loc>
     <lastmod>2026-11-03</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-nicht-zugestellt-ursachen-finden-und-zustellprobleme-systematis/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-nicht-zugestellt-ursachen-finden-und-zustellprobleme-systematis</loc>
     <lastmod>2026-11-02</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dnsbl-check-warum-e-mail-betreiber-regelmassig-ihre-server-reputation-/</loc>
+    <loc>https://www.email-checken.de/blog/dnsbl-check-warum-e-mail-betreiber-regelmassig-ihre-server-reputation-</loc>
     <lastmod>2026-11-01</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-spoofing-verhindern-wirksame-schutzmassnahmen-fur-ihre-domain/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-spoofing-verhindern-wirksame-schutzmassnahmen-fur-ihre-domain</loc>
     <lastmod>2026-10-31</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-authentifizierung-warum-vertrauenswurdige-absender-heute-unverz/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-authentifizierung-warum-vertrauenswurdige-absender-heute-unverz</loc>
     <lastmod>2026-10-30</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/sender-policy-framework-so-schutzen-sie-ihre-e-mail-domains-vor-missbr/</loc>
+    <loc>https://www.email-checken.de/blog/sender-policy-framework-so-schutzen-sie-ihre-e-mail-domains-vor-missbr</loc>
     <lastmod>2026-10-29</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dkim-einrichten-schritt-fur-schritt-anleitung-fur-sichere-e-mail-authe/</loc>
+    <loc>https://www.email-checken.de/blog/dkim-einrichten-schritt-fur-schritt-anleitung-fur-sichere-e-mail-authe</loc>
     <lastmod>2026-10-28</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/was-ist-dmarc-so-schutzen-sie-ihre-e-mails-mit-dem-sicherheitsstandard/</loc>
+    <loc>https://www.email-checken.de/blog/was-ist-dmarc-so-schutzen-sie-ihre-e-mails-mit-dem-sicherheitsstandard</loc>
     <lastmod>2026-10-27</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/was-ist-dkim-e-mail-authentifizierung-einfach-erklart/</loc>
+    <loc>https://www.email-checken.de/blog/was-ist-dkim-e-mail-authentifizierung-einfach-erklart</loc>
     <lastmod>2026-10-25</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/was-ist-spf-der-wichtigste-schutz-fur-ihre-e-mail-domain/</loc>
+    <loc>https://www.email-checken.de/blog/was-ist-spf-der-wichtigste-schutz-fur-ihre-e-mail-domain</loc>
     <lastmod>2026-10-24</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/mail-server-blacklist-check-so-stellen-sie-sicher-dass-ihre-e-mails-an/</loc>
+    <loc>https://www.email-checken.de/blog/mail-server-blacklist-check-so-stellen-sie-sicher-dass-ihre-e-mails-an</loc>
     <lastmod>2026-10-23</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/ptr-record-prufen-so-verbessern-sie-die-zustellrate-ihrer-e-mails/</loc>
+    <loc>https://www.email-checken.de/blog/ptr-record-prufen-so-verbessern-sie-die-zustellrate-ihrer-e-mails</loc>
     <lastmod>2026-10-22</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/reverse-dns-prufen-verhindern-sie-dass-ihre-e-mails-im-spam-landen/</loc>
+    <loc>https://www.email-checken.de/blog/reverse-dns-prufen-verhindern-sie-dass-ihre-e-mails-im-spam-landen</loc>
     <lastmod>2026-10-21</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-sicherheitscheck-schutzen-sie-ihre-digitale-kommunikation-mit-g/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-sicherheitscheck-schutzen-sie-ihre-digitale-kommunikation-mit-g</loc>
     <lastmod>2026-10-20</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/mx-record-prufen-fehlerfreier-e-mail-empfang-fur-ihre-domain/</loc>
+    <loc>https://www.email-checken.de/blog/mx-record-prufen-fehlerfreier-e-mail-empfang-fur-ihre-domain</loc>
     <lastmod>2026-10-19</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-domain-prufen-wie-sie-die-qualitat-und-sicherheit-ihrer-e-mail-/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-domain-prufen-wie-sie-die-qualitat-und-sicherheit-ihrer-e-mail-</loc>
     <lastmod>2026-10-16</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dkim-prufen-korrekte-konfiguration-fur-verbesserte-e-mail-zustellbarke/</loc>
+    <loc>https://www.email-checken.de/blog/dkim-prufen-korrekte-konfiguration-fur-verbesserte-e-mail-zustellbarke</loc>
     <lastmod>2026-10-13</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/spf-record-prufen-ihre-domain-vor-e-mail-spoofing-schutzen/</loc>
+    <loc>https://www.email-checken.de/blog/spf-record-prufen-ihre-domain-vor-e-mail-spoofing-schutzen</loc>
     <lastmod>2026-10-11</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/e-mail-sicherheit-prufen-wirksame-massnahmen-fur-geschutzte-kommunikat/</loc>
+    <loc>https://www.email-checken.de/blog/e-mail-sicherheit-prufen-wirksame-massnahmen-fur-geschutzte-kommunikat</loc>
     <lastmod>2026-10-09</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dmarc-prufen-schutzen-sie-ihre-e-mail-domain-vor-missbrauch/</loc>
+    <loc>https://www.email-checken.de/blog/dmarc-prufen-schutzen-sie-ihre-e-mail-domain-vor-missbrauch</loc>
     <lastmod>2026-10-08</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/dkim-check-so-schutzen-sie-ihre-e-mails-vor-spam-und-phishing/</loc>
+    <loc>https://www.email-checken.de/blog/dkim-check-so-schutzen-sie-ihre-e-mails-vor-spam-und-phishing</loc>
     <lastmod>2026-10-06</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.email-checken.de/blog/spf-prufen-so-uberprufen-sie-ihren-spf-eintrag-richtig/</loc>
+    <loc>https://www.email-checken.de/blog/spf-prufen-so-uberprufen-sie-ihren-spf-eintrag-richtig</loc>
     <lastmod>2026-10-04</lastmod>
     <priority>0.7</priority>
   </url>

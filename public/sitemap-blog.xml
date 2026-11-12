@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.email-checken.de/blog</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-12</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.email-checken.de/blog/warum-kommen-meine-e-mails-nicht-an-ursachen-erkennen-und-beheben</loc>
+    <lastmod>2026-11-12</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.email-checken.de/blog/mail-server-test-funktionalitat-und-konfiguration-ihres-smtp-servers-g</loc>

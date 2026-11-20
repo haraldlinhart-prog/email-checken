@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung</title>
+<meta name="description" content="DKIM Check durchführen: Schritt-für-Schritt-Anleitung mit konkreten Tools, Fehlerdiagnose und Interpretation der Testergebnisse für sichere E-Mails.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung">
+<meta property="og:description" content="DKIM Check durchführen: Schritt-für-Schritt-Anleitung mit konkreten Tools, Fehlerdiagnose und Interpretation der Testergebnisse für sichere E-Mails.">
+<meta property="og:url" content="https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif">
+<meta property="og:site_name" content="email-checken.de">
+<meta property="og:image" content="https://video.pan21.com/blog-images/img_6affe393022736.45358215.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://video.pan21.com/blog-images/img_6affe393022736.45358215.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung","description":"DKIM Check durchführen: Schritt-für-Schritt-Anleitung mit konkreten Tools, Fehlerdiagnose und Interpretation der Testergebnisse für sichere E-Mails.","inLanguage":"de","datePublished":"2026-11-20T06:07:19.532Z","dateModified":"2026-11-20T06:07:19.532Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif"},"url":"https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif","image":"https://video.pan21.com/blog-images/img_6affe393022736.45358215.jpg","author":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"},"publisher":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","name":"DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung","itemListElement":[{"@type":"ListItem","position":1,"name":"email-checken.de","item":"https://www.email-checken.de/"},{"@type":"ListItem","position":2,"name":"News","item":"https://www.email-checken.de/blog"},{"@type":"ListItem","position":3,"name":"DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung","item":"https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif"}]}</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+  p { margin: 1rem 0; }
+  a.back { display: inline-block; margin-bottom: 24px; color: #666; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back" href="https://www.email-checken.de/">&larr; Zurück zu email-checken.de</a>
+<h1>DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung</h1>
+<figure style="margin:0 0 1.5rem;"><img src="https://video.pan21.com/blog-images/img_6affe393022736.45358215.jpg" alt="DKIM Check: Praktische Anleitung zur Überprüfung Ihrer E-Mail-Authentifizierung" style="width:100%;height:auto;border-radius:8px;" loading="lazy"><figcaption style="font-size:0.78rem;color:#8a9a94;margin-top:0.4rem;">Bild: Pixabay</figcaption></figure>
+
+<p>Ein DKIM Check ist unverzichtbar, um zu überprüfen, ob Ihre E-Mail-Authentifizierung korrekt funktioniert. Ohne regelmäßige Kontrolle können fehlerhafte Konfigurationen dazu führen, dass Ihre E-Mails als Spam klassifiziert oder gar nicht zugestellt werden. In diesem Leitfaden erfahren Sie, wie Sie einen DKIM Check durchführen, welche Tools dafür zur Verfügung stehen und wie Sie die Ergebnisse richtig interpretieren.</p>
+
+<h2>Warum ein DKIM Check notwendig ist</h2>
+
+<p>Die Einrichtung von DKIM allein reicht nicht aus. Nach der Konfiguration und bei jeder Änderung an Ihrem E-Mail-System sollten Sie einen DKIM Check durchführen. Nur so stellen Sie sicher, dass die digitale Signatur korrekt erstellt und die DNS-Einträge vom Empfängerserver gefunden werden können. Probleme bei der DKIM-Konfiguration bleiben oft unbemerkt, bis Empfänger sich über fehlende E-Mails beschweren oder wichtige Nachrichten im Spam-Ordner landen.</p>
+
+<p>Ein regelmäßiger DKIM Check hilft Ihnen dabei, technische Probleme frühzeitig zu erkennen. Typische Situationen, in denen eine Überprüfung sinnvoll ist, umfassen den Wechsel des E-Mail-Providers, Änderungen an DNS-Einträgen, die Migration zu einem neuen Server oder wenn Sie bemerken, dass Ihre E-Mails zunehmend als Spam markiert werden.</p>
+
+<h2>DKIM Check mit Online-Tools durchführen</h2>
+
+<p>Für die praktische Durchführung eines DKIM Checks stehen verschiedene Online-Tools zur Verfügung. Die meisten dieser Tools funktionieren nach demselben Prinzip: Sie senden eine Test-E-Mail an eine spezielle Adresse, und das Tool analysiert die eingehende Nachricht auf ihre DKIM-Signatur.</p>
+
+<h3>Test-E-Mail versenden</h3>
+
+<p>Öffnen Sie das DKIM Check Tool Ihrer Wahl und notieren Sie sich die dort angezeigte E-Mail-Adresse. Diese Adresse ist einzigartig für Ihren Test und dient dazu, Ihre gesendete E-Mail dem richtigen Testvorgang zuzuordnen. Öffnen Sie nun Ihr E-Mail-Programm oder Ihre Anwendung, von der aus Sie E-Mails versenden, und erstellen Sie eine neue Nachricht. Tragen Sie die Test-Adresse als Empfänger ein. Der Betreff und Inhalt der E-Mail sind für den DKIM Check nicht relevant – Sie können einen beliebigen Text eingeben. Senden Sie die E-Mail ab und warten Sie einige Sekunden bis Minuten, bis das Tool die Analyse abgeschlossen hat.</p>
+
+<h3>DNS-basierte DKIM-Prüfung</h3>
+
+<p>Einige Tools bieten auch eine direkte DNS-Abfrage an, bei der Sie Ihre Domain und den verwendeten DKIM Selector eingeben. Das Tool fragt dann den entsprechenden DNS-Eintrag ab und überprüft dessen Struktur. Diese Methode ist schneller, testet aber nicht den gesamten Signierungsprozess, sondern nur die Verfügbarkeit und Korrektheit des öffentlichen Schlüssels im DNS. Für einen vollständigen Test sollten Sie beide Methoden kombinieren.</p>
+
+<h2>DKIM Testergebnisse richtig interpretieren</h2>
+
+<p>Nach Abschluss des Tests erhalten Sie ein Ergebnis, das verschiedene Informationen enthält. Die korrekte Interpretation dieser Daten ist entscheidend, um Probleme zu identifizieren und zu beheben.</p>
+
+<h3>DKIM-Status: Pass oder Fail</h3>
+
+<p>Das wichtigste Element ist der DKIM-Status. Ein "Pass" oder "OK" bedeutet, dass die DKIM-Signatur erfolgreich validiert wurde. Die E-Mail ist korrekt signiert, der DNS-Eintrag wurde gefunden, und die Signatur konnte mit dem öffentlichen Schlüssel verifiziert werden. Dies ist das gewünschte Ergebnis.</p>
+
+<p>Ein "Fail" oder "Invalid" zeigt an, dass die Validierung fehlgeschlagen ist. Dies kann verschiedene Ursachen haben, die Sie im Detail untersuchen müssen. Bei einem negativen Ergebnis sollten Sie zunächst prüfen, ob überhaupt eine DKIM-Signatur vorhanden war. Manche Tools zeigen "None" oder "Missing" an, wenn die gesendete E-Mail gar keine DKIM-Signatur enthält.</p>
+
+<h3>Details der DKIM-Signatur</h3>
+
+<p>Gute DKIM Check Tools zeigen Ihnen die Details der gefundenen Signatur an. Dazu gehören der verwendete Selector, die signierende Domain und der Algorithmus. Der Selector ist dabei besonders wichtig: Er gibt an, welcher DNS-Eintrag für die Validierung verwendet wurde. Wenn Sie mehrere Selectors verwenden, können Sie hier überprüfen, welcher tatsächlich zum Einsatz kam.</p>
+
+<p>Die signierende Domain sollte mit Ihrer eigenen Domain übereinstimmen. Achten Sie darauf, dass es sich um die korrekte Domain handelt, insbesondere wenn Sie Subdomains verwenden. Der Algorithmus ist meist RSA mit SHA-256 (rsa-sha256), was als sicher gilt. Falls ältere Algorithmen wie SHA-1 angezeigt werden, sollten Sie eine Aktualisierung in Betracht ziehen.</p>
+
+<h3>DNS-Abfrageergebnis</h3>
+
+<p>Viele Tools zeigen auch das Ergebnis der DNS-Abfrage an. Hier sehen Sie den tatsächlichen TXT-Eintrag, der im DNS hinterlegt ist. Dieser enthält Ihren öffentlichen Schlüssel und weitere Parameter wie den Key-Type und den Service-Type. Überprüfen Sie, ob der Eintrag vollständig ist und keine offensichtlichen Fehler enthält. Achten Sie besonders auf Leerzeichen oder Zeilenumbrüche, die beim Kopieren des Eintrags versehentlich eingefügt worden sein könnten.</p>
+
+<h2>Häufige Fehler beim DKIM Check und deren Diagnose</h2>
+
+<p>Die Praxis zeigt, dass bestimmte Fehler besonders häufig auftreten. Mit der richtigen Diagnose können Sie diese gezielt beheben.</p>
+
+<h3>DNS-Eintrag nicht gefunden</h3>
+
+<p>Wenn das Tool meldet, dass der DNS-Eintrag nicht gefunden wurde, liegt das Problem in der DNS-Konfiguration. Überprüfen Sie zunächst, ob Sie den richtigen Selector verwenden. Der DNS-Eintrag muss exakt dem Format selector._domainkey.ihre-domain.de entsprechen. Ein falsch geschriebener Selector führt dazu, dass der Eintrag nicht gefunden wird.</p>
+
+<p>Prüfen Sie außerdem, ob der DNS-Eintrag überhaupt angelegt wurde. Nach dem Anlegen eines neuen Eintrags kann es einige Zeit dauern, bis dieser weltweit verfügbar ist. Diese Propagierungszeit variiert, liegt aber üblicherweise im Bereich von Minuten bis wenigen Stunden. Wenn Sie den Eintrag gerade erst erstellt haben, warten Sie etwas und führen Sie den DKIM Check erneut durch.</p>
+
+<h3>Signatur-Validierung fehlgeschlagen</h3>
+
+<p>Wenn der DNS-Eintrag gefunden wird, die Validierung aber fehlschlägt, stimmt der private Schlüssel auf Ihrem Mailserver nicht mit dem öffentlichen Schlüssel im DNS überein. Dies passiert häufig nach der Neugenerierung von DKIM-Schlüsseln, wenn der neue öffentliche Schlüssel nicht korrekt im DNS aktualisiert wurde.</p>
+
+<p>Ein weiterer Grund kann eine Veränderung der E-Mail während der Übertragung sein. Wenn Ihr Mailserver oder ein dazwischengeschalteter Server den Inhalt oder bestimmte Header der E-Mail verändert, wird die Signatur ungültig. Prüfen Sie in diesem Fall, welche Header in die Signatur einbezogen werden, und passen Sie gegebenenfalls die Konfiguration an.</p>
+
+<h3>Fehlende Signatur</h3>
+
+<p>Wenn überhaupt keine DKIM-Signatur gefunden wird, ist DKIM entweder nicht aktiviert oder nicht korrekt konfiguriert. Stellen Sie sicher, dass Ihr Mailserver für ausgehende E-Mails tatsächlich DKIM-Signaturen erstellt. Bei Verwendung externer E-Mail-Dienste müssen Sie DKIM möglicherweise explizit in den Einstellungen aktivieren.</p>
+
+<h2>DKIM Check als Teil der E-Mail-Wartung</h2>
+
+<p>Ein einmaliger DKIM Check reicht nicht aus. Integrieren Sie die Überprüfung in Ihre regelmäßigen Wartungsroutinen. Nach jeder Änderung an Ihrer E-Mail-Infrastruktur sollten Sie einen Test durchführen. Dazu gehören Updates des Mailservers, Änderungen an DNS-Einträgen, der Wechsel von Hosting-Anbietern oder die Einführung neuer E-Mail-Dienste.</p>
+
+<p>Dokumentieren Sie die Ergebnisse Ihrer DKIM Checks, damit Sie Veränderungen im Zeitverlauf nachvollziehen können. Dies hilft bei der Fehlersuche, wenn plötzlich Probleme auftreten. Notieren Sie sich auch die verwendeten Selectors und die Zeitpunkte, zu denen Sie DKIM-Schlüssel erneuert haben.</p>
+
+<p>Neben dem DKIM Check sollten Sie auch andere E-Mail-Authentifizierungsmechanismen wie SPF und DMARC im Auge behalten. Viele moderne Check-Tools bieten eine kombinierte Prüfung aller drei Verfahren an, was Ihnen einen umfassenden Überblick über die Sicherheit Ihrer E-Mail-Kommunikation gibt.</p>
+
+<h2>Erweiterte DKIM-Prüfung mit Header-Analyse</h2>
+
+<p>Für eine tiefergehende Diagnose können Sie die E-Mail-Header manuell analysieren. Wenn Sie eine E-Mail erhalten haben, die Sie selbst versendet haben, können Sie in den meisten E-Mail-Programmen die vollständigen Header anzeigen lassen. Suchen Sie dort nach dem "DKIM-Signature"-Header. Dieser enthält alle Parameter der Signatur, einschließlich des verwendeten Selectors, der signierten Header und des Zeitstempels.</p>
+
+<p>Die Header-Analyse zeigt Ihnen auch, wie Empfängerserver Ihre DKIM-Signatur bewertet haben. Der "Authentication-Results"-Header dokumentiert das Ergebnis der Validierung. Diese Information ist besonders wertvoll, wenn Sie verstehen möchten, warum bestimmte Empfänger Probleme mit Ihren E-Mails haben.</p>
+
+<h2>Zusammenarbeit zwischen DKIM Check und anderen Authentifizierungsmethoden</h2>
+
+<p>Ein DKIM Check sollte nicht isoliert betrachtet werden. <a href="https://www.email-checken.de/blog/was-ist-dkim-e-mail-authentifizierung-einfach-erklart">Die E-Mail-Authentifizierung</a> basiert auf dem Zusammenspiel mehrerer Verfahren. DKIM arbeitet Hand in Hand mit SPF und DMARC, um einen umfassenden Schutz zu bieten. Bei der Durchführung eines DKIM Checks sollten Sie daher auch die anderen Mechanismen überprüfen.</p>
+
+<p>SPF validiert den sendenden Server, während DKIM die Integrität der Nachricht selbst sicherstellt. DMARC gibt schließlich vor, wie Empfänger mit E-Mails umgehen sollen, die diese Prüfungen nicht bestehen. Erst die Kombination dieser drei Verfahren bietet einen wirksamen Schutz vor Spoofing und Phishing.</p>
+
+<p>Bei der Interpretation Ihrer DKIM Check Ergebnisse sollten Sie daher auch berücksichtigen, wie Ihre DMARC-Richtlinie konfiguriert ist. Selbst wenn DKIM korrekt funktioniert, kann eine fehlgeschlagene SPF-Prüfung bei strikter DMARC-Richtlinie zu Zustellproblemen führen.</p>
+
+<h2>Spezielle Herausforderungen beim DKIM Check</h2>
+
+<p>Bestimmte E-Mail-Szenarien erfordern besondere Aufmerksamkeit beim DKIM Check. Wenn Sie E-Mails über Drittanbieter versenden, etwa über Newsletter-Tools oder Marketing-Plattformen, müssen Sie sicherstellen, dass diese Dienste Ihre E-Mails mit Ihrer Domain signieren. Dies erfordert oft die Konfiguration von <a href="https://www.email-checken.de/blog/dkim-selector-die-schlusselkomponente-fur-zuverlassige-e-mail-authenti">speziellen DKIM Selectors</a> für jeden verwendeten Dienst.</p>
+
+<p>Bei E-Mail-Weiterleitungen kann DKIM problematisch werden. Wenn eine E-Mail weitergeleitet wird und dabei Header verändert werden, wird die ursprüngliche DKIM-Signatur ungültig. Dies ist ein bekanntes Problem, für das es keine perfekte Lösung gibt. Sie sollten dies bei der Interpretation von DKIM Check Ergebnissen berücksichtigen, insbesondere wenn Sie von Problemen bei weitergeleiteten E-Mails hören.</p>
+
+<h2>Fazit</h2>
+
+<p>Ein regelmäßiger DKIM Check ist unverzichtbar für jeden, der professionell E-Mails versendet. Mit den richtigen Tools und dem Verständnis für die Interpretation der Ergebnisse können Sie Probleme frühzeitig erkennen und beheben. Die praktische Durchführung eines DKIM Checks ist unkompliziert: Test-E-Mail versenden, Ergebnisse analysieren und bei Bedarf Konfiguration anpassen. Kombinieren Sie den DKIM Check mit der Überprüfung anderer Authentifizierungsmechanismen, um <a href="https://www.email-checken.de/blog/dkim-check-so-schutzen-sie-ihre-e-mails-vor-spam-und-phishing">Ihre E-Mails umfassend zu schützen</a> und eine hohe Zustellbarkeit sicherzustellen.</p>
+<p style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee"><a href="https://www.email-checken.de/blog">Weitere Artikel &rarr;</a></p>
+<footer style="margin-top:2rem;font-size:0.85rem;color:#666"><a href="https://www.email-checken.de/datenschutz">Datenschutz</a></footer>
+</body>
+</html>

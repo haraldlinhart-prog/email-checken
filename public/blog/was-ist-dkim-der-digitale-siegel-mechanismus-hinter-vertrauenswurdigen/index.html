@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails</title>
+<meta name="description" content="Was ist DKIM? Einfach erklärt: wie die digitale Signatur Absender und Inhalt Ihrer E-Mails absichert, wie sie im Header aussieht und wie sie sich von SPF und DMARC unterscheidet.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.email-checken.de/blog/was-ist-dkim-der-digitale-siegel-mechanismus-hinter-vertrauenswurdigen">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails">
+<meta property="og:description" content="Was ist DKIM? Einfach erklärt: wie die digitale Signatur Absender und Inhalt Ihrer E-Mails absichert, wie sie im Header aussieht und wie sie sich von SPF und DMARC unterscheidet.">
+<meta property="og:url" content="https://www.email-checken.de/blog/was-ist-dkim-der-digitale-siegel-mechanismus-hinter-vertrauenswurdigen">
+<meta property="og:site_name" content="email-checken.de">
+<meta property="og:image" content="https://video.pan21.com/blog-images/img_6b03d7de4fd760.68710102.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://video.pan21.com/blog-images/img_6b03d7de4fd760.68710102.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails","description":"Was ist DKIM? Einfach erklärt: wie die digitale Signatur Absender und Inhalt Ihrer E-Mails absichert, wie sie im Header aussieht und wie sie sich von SPF und DMARC unterscheidet.","inLanguage":"de","datePublished":"2026-11-23T06:06:26.868Z","dateModified":"2026-11-23T06:06:26.868Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.email-checken.de/blog/was-ist-dkim-der-digitale-siegel-mechanismus-hinter-vertrauenswurdigen"},"url":"https://www.email-checken.de/blog/was-ist-dkim-der-digitale-siegel-mechanismus-hinter-vertrauenswurdigen","image":"https://video.pan21.com/blog-images/img_6b03d7de4fd760.68710102.jpg","author":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"},"publisher":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","name":"Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails","itemListElement":[{"@type":"ListItem","position":1,"name":"email-checken.de","item":"https://www.email-checken.de/"},{"@type":"ListItem","position":2,"name":"News","item":"https://www.email-checken.de/blog"},{"@type":"ListItem","position":3,"name":"Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails","item":"https://www.email-checken.de/blog/was-ist-dkim-der-digitale-siegel-mechanismus-hinter-vertrauenswurdigen"}]}</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+  p { margin: 1rem 0; }
+  a.back { display: inline-block; margin-bottom: 24px; color: #666; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back" href="https://www.email-checken.de/">&larr; Zurück zu email-checken.de</a>
+<figure style="margin:0 0 1.5rem;"><img src="https://video.pan21.com/blog-images/img_6b03d7de4fd760.68710102.jpg" alt="Was ist DKIM? Der digitale Siegel-Mechanismus hinter vertrauenswürdigen E-Mails" style="width:100%;height:auto;border-radius:8px;" loading="lazy"><figcaption style="font-size:0.78rem;color:#8a9a94;margin-top:0.4rem;">Bild: Pixabay</figcaption></figure>
+<h2>Was ist DKIM? Die Kurzdefinition</h2>
+<p>DKIM steht für „DomainKeys Identified Mail". Es ist ein Verfahren, mit dem ein sendender Mailserver jede ausgehende E-Mail digital signiert. Der empfangende Server kann anhand dieser Signatur prüfen, ob die Nachricht wirklich von einer berechtigten Stelle der angegebenen Domain stammt und ob sie unterwegs verändert wurde.</p>
+<p>Man kann sich DKIM wie ein Siegel auf einem Brief vorstellen: Es sagt nicht, ob der Inhalt klug oder harmlos ist, aber es zeigt, von welcher Domain das Siegel stammt und dass der Umschlag nicht unbemerkt geöffnet und neu verschlossen wurde. Wer wissen möchte, wie man diese Prüfung praktisch durchführt, findet dazu eine <a href="https://www.email-checken.de/blog/dkim-check-praktische-anleitung-zur-uberprufung-ihrer-e-mail-authentif">praktische Anleitung zum DKIM Check</a>. Hier geht es zunächst um das Grundverständnis.</p>
+
+<h2>Wozu dient DKIM? Zwei Ziele</h2>
+<p>Das normale E-Mail-Protokoll wurde zu einer Zeit entworfen, in der man davon ausging, dass sich alle Beteiligten ehrlich verhalten. Absenderangaben lassen sich daher leicht fälschen. DKIM verfolgt zwei Ziele:</p>
+<ul>
+<li><strong>Echtheit des Absenders:</strong> Die Signatur belegt, dass die Nachricht von einem Server stammt, der für die signierende Domain den passenden Schlüssel besitzt.</li>
+<li><strong>Unverfälschtheit der Nachricht:</strong> Wird signierter Inhalt nach dem Versand verändert, passt die Signatur nicht mehr, und die Prüfung schlägt fehl.</li>
+</ul>
+<p>Das hilft gegen gefälschte Absender, Spam und Phishing, ist aber kein Rundumschutz. Eine korrekt signierte Mail kann trotzdem unerwünscht sein, wenn die Domain selbst missbraucht wird.</p>
+
+<h2>Wie funktioniert DKIM? Vom Signieren bis zum Prüfen</h2>
+<p>DKIM arbeitet mit einem Schlüsselpaar aus zwei zusammengehörigen Teilen. Das Prinzip nennt sich asymmetrische Kryptografie.</p>
+<h3>Schritt 1: Signieren mit dem privaten Schlüssel</h3>
+<p>Der private Schlüssel liegt ausschließlich auf dem sendenden Mailserver oder beim E-Mail-Dienstleister und bleibt geheim. Beim Versand berechnet der Server aus ausgewählten Teilen der Nachricht (bestimmte Kopfzeilen und der Text) eine Prüfsumme, einen sogenannten Hash. Diesen verschlüsselt er mit dem privaten Schlüssel. Das Ergebnis wird als Signatur in den Header der E-Mail eingefügt.</p>
+<h3>Schritt 2: Veröffentlichen des öffentlichen Schlüssels im DNS</h3>
+<p>Der dazugehörige öffentliche Schlüssel steht für alle sichtbar im DNS der Domain, dem „Telefonbuch des Internets", und zwar als TXT-Eintrag. Wo genau, verrät die Signatur selbst über zwei Angaben, die Domain und den Selector. Letzterer ist eine Bezeichnung für den jeweils verwendeten Schlüssel; Details dazu erklärt ein eigener Artikel zum DKIM Selector.</p>
+<h3>Schritt 3: Prüfen beim Empfänger</h3>
+<p>Der empfangende Server liest die Signatur aus dem Header, holt den öffentlichen Schlüssel per DNS-Abfrage und entschlüsselt damit die Signatur. Gleichzeitig berechnet er die Prüfsumme der angekommenen Nachricht selbst. Stimmen beide Werte überein, gilt die Prüfung als bestanden. Weichen sie ab, wurde die Nachricht verändert oder der Schlüssel passt nicht zur Signatur.</p>
+<p>Entscheidend: Aus dem öffentlichen Schlüssel lässt sich der private nicht ableiten. Deshalb kann jeder prüfen, aber nur der Berechtigte signieren.</p>
+
+<h2>Wie sieht eine DKIM-Signatur im Header aus?</h2>
+<p>Im vollständigen Header einer E-Mail finden Sie die Zeile <code>DKIM-Signature</code>. Sie besteht aus Einträgen in der Form „Kürzel=Wert", getrennt durch Semikolons. Die wichtigsten Bestandteile:</p>
+<ul>
+<li><code>v</code>: die Version des Verfahrens.</li>
+<li><code>a</code>: der verwendete Signaturalgorithmus.</li>
+<li><code>d</code>: die signierende Domain.</li>
+<li><code>s</code>: der Selector, der zusammen mit der Domain den Ort des öffentlichen Schlüssels im DNS festlegt.</li>
+<li><code>h</code>: die Liste der Kopfzeilen, die in die Signatur einbezogen wurden, etwa Absender, Betreff und Datum.</li>
+<li><code>bh</code>: der Hash des Nachrichtentexts (Body Hash).</li>
+<li><code>b</code>: die eigentliche Signatur als lange Zeichenfolge.</li>
+<li><code>c</code>: die Art der Normalisierung („simple" oder „relaxed"), die kleine Formatänderungen beim Transport toleriert.</li>
+</ul>
+<p>Für Einsteiger genügt meist ein Blick auf <code>d</code> und <code>s</code>. Wie Sie Ergebnisse wie „pass" oder „fail" deuten, ist im bereits genannten Prüf-Artikel beschrieben.</p>
+
+<h2>DKIM, SPF und DMARC: Wo liegen die Unterschiede?</h2>
+<p>DKIM wird häufig mit zwei verwandten Verfahren genannt. Sie ergänzen sich, ersetzen sich aber nicht.</p>
+<h3>SPF: Wer darf senden?</h3>
+<p>Beim Sender Policy Framework hinterlegt die Domain im DNS eine Liste der Server, die in ihrem Namen E-Mails verschicken dürfen. Der Empfänger prüft, ob der einliefernde Server dazugehört. SPF betrachtet also den Absendeweg, nicht den Inhalt. Bei Weiterleitungen kann SPF Probleme bekommen, weil dann ein anderer Server einliefert.</p>
+<h3>DKIM: Ist die Nachricht echt und unverändert?</h3>
+<p>DKIM hängt an der Nachricht selbst. Die Signatur bleibt in der Regel auch bei einer Weiterleitung erhalten, solange signierte Teile nicht verändert werden. Mailinglisten, die etwa den Betreff ergänzen, können sie allerdings ungültig machen.</p>
+<h3>DMARC: Was passiert bei Fehlschlag?</h3>
+<p>DMARC baut auf SPF und DKIM auf. Der Domaininhaber legt fest, wie Empfänger mit Nachrichten umgehen sollen, die die Prüfungen nicht bestehen, etwa annehmen, als verdächtig markieren oder ablehnen. Zudem verlangt DMARC, dass die geprüfte Domain zur sichtbaren Absenderadresse passt, und ermöglicht Berichte über Auswertungen.</p>
+<p>Kurz gesagt: SPF prüft den Versandweg, DKIM die Signatur der Nachricht, DMARC legt die Regeln fest und verknüpft beides mit der sichtbaren Absenderadresse. Für Schutz vor Spam und Phishing arbeiten die drei am besten zusammen, wie auch der Beitrag <a href="https://www.email-checken.de/blog/dkim-check-so-schutzen-sie-ihre-e-mails-vor-spam-und-phishing">DKIM Check: So schützen Sie Ihre E-Mails vor Spam und Phishing</a> zeigt.</p>
+
+<h2>Was bedeutet das für Sie als Nutzer oder Domaininhaber?</h2>
+<p>Als reiner Empfänger müssen Sie nichts einrichten; Ihr Mailanbieter prüft DKIM im Hintergrund und fließt in die Spam-Bewertung ein. Wer eine eigene Domain für E-Mails nutzt, sollte dagegen sicherstellen, dass der Versanddienst DKIM-Signaturen erzeugt und der öffentliche Schlüssel im DNS steht. Fehlt die Signatur, steigt die Gefahr, dass legitime Nachrichten bei Empfängern als verdächtig eingestuft werden oder dass Dritte die Domain leichter fälschen können. Eine Garantie für die Zustellung ergibt sich aus DKIM allein jedoch nicht, denn Empfänger berücksichtigen weitere Faktoren.</p>
+
+<h2>Fazit</h2>
+<p>DKIM ist ein digitales Siegel für E-Mails: Der Absender signiert mit einem privaten Schlüssel, der Empfänger prüft mit dem öffentlichen Schlüssel aus dem DNS. So lassen sich Herkunft und Unverfälschtheit einer Nachricht belegen. Zusammen mit SPF und DMARC bildet DKIM die Grundlage moderner E-Mail-Authentifizierung. Weitere Hintergründe liefert auch der Artikel <a href="https://www.email-checken.de/blog/was-ist-dkim-e-mail-authentifizierung-einfach-erklart">Was ist DKIM? E-Mail-Authentifizierung einfach erklärt</a>.</p>
+<p style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee"><a href="https://www.email-checken.de/blog">Weitere Artikel &rarr;</a></p>
+<footer style="margin-top:2rem;font-size:0.85rem;color:#666"><a href="https://www.email-checken.de/datenschutz">Datenschutz</a></footer>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann</title>
+<meta name="description" content="IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren, wie CNAME- und TXT-Einträge im IONOS-DNS oder bei externem DNS landen und welche Fehler typisch sind.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann">
+<meta property="og:description" content="IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren, wie CNAME- und TXT-Einträge im IONOS-DNS oder bei externem DNS landen und welche Fehler typisch sind.">
+<meta property="og:url" content="https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den">
+<meta property="og:site_name" content="email-checken.de">
+<meta property="og:image" content="https://video.pan21.com/blog-images/img_6b052a0e67cce8.08186588.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://video.pan21.com/blog-images/img_6b052a0e67cce8.08186588.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann","description":"IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren, wie CNAME- und TXT-Einträge im IONOS-DNS oder bei externem DNS landen und welche Fehler typisch sind.","inLanguage":"de","datePublished":"2026-11-24T06:09:22.979Z","dateModified":"2026-11-24T06:09:22.979Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den"},"url":"https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den","image":"https://video.pan21.com/blog-images/img_6b052a0e67cce8.08186588.jpg","author":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"},"publisher":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","name":"IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann","itemListElement":[{"@type":"ListItem","position":1,"name":"email-checken.de","item":"https://www.email-checken.de/"},{"@type":"ListItem","position":2,"name":"News","item":"https://www.email-checken.de/blog"},{"@type":"ListItem","position":3,"name":"IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann","item":"https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den"}]}</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+  p { margin: 1rem 0; }
+  a.back { display: inline-block; margin-bottom: 24px; color: #666; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back" href="https://www.email-checken.de/">&larr; Zurück zu email-checken.de</a>
+<figure style="margin:0 0 1.5rem;"><img src="https://video.pan21.com/blog-images/img_6b052a0e67cce8.08186588.jpg" alt="IONOS DKIM einrichten: Wo Sie im Kundenkonto aktivieren und was bei den DNS-Einträgen schiefgehen kann" style="width:100%;height:auto;border-radius:8px;" loading="lazy"><figcaption style="font-size:0.78rem;color:#8a9a94;margin-top:0.4rem;">Bild: Pixabay</figcaption></figure>
+<p>Viele kleine Firmen betreuen ihre Domain und ihre Postfächer bei IONOS. Wer dort DKIM nutzen möchte, stößt schnell auf Fragen: Wo wird es überhaupt aktiviert? Muss ich selbst Schlüssel erzeugen? Und was ist, wenn die Domain gar nicht bei IONOS verwaltet wird? Dieser Artikel konzentriert sich auf genau diese IONOS-Praxis. Die Grundlagen finden Sie in unserem Beitrag <a href="https://www.email-checken.de/blog/was-ist-dkim-e-mail-authentifizierung-einfach-erklart">Was ist DKIM?</a>, die allgemeine Technik in der <a href="https://www.email-checken.de/blog/dkim-einrichten-schritt-fur-schritt-anleitung-fur-sichere-e-mail-authe">Schritt-für-Schritt-Anleitung zu DKIM</a>. Hier geht es um den konkreten Weg bei IONOS.</p>
+
+<h2>Vorab: Was bei IONOS anders ist als bei einer Selbstkonfiguration</h2>
+<p>Bei einem gehosteten Postfachdienst erzeugt der Anbieter das Schlüsselpaar in der Regel selbst. Sie müssen keinen privaten Schlüssel anlegen oder auf einem Server ablegen. Ihre Aufgabe besteht darin, DKIM für die Domain freizugeben und die vom Anbieter genannten DNS-Einträge korrekt zu hinterlegen. Die genaue Bezeichnung der Menüpunkte und die Form der Einträge (CNAME oder TXT, Name des Selectors) kann sich bei IONOS je nach Produkt und im Lauf der Zeit ändern. Verlassen Sie sich deshalb auf die Werte, die Ihnen Ihr Kundenkonto anzeigt, und nicht auf Beispiele aus Anleitungen.</p>
+
+<h2>Schritt 1: Den richtigen Bereich im IONOS-Kundenkonto finden</h2>
+<p>Je nach Vertrag gibt es zwei Ausgangspunkte:</p>
+<ul>
+<li><strong>E-Mail-Postfächer:</strong> Melden Sie sich im Kundenkonto an und öffnen Sie den Bereich für Ihre E-Mail-Produkte (etwa E-Mail-Postfächer oder Mail Basic bzw. Mail Business). Dort finden Sie die Verwaltung der Domain-Einstellungen und, sofern für Ihren Tarif verfügbar, die Optionen zur E-Mail-Authentifizierung.</li>
+<li><strong>Domains &amp; SSL:</strong> Hier verwalten Sie die Domain selbst. Über die Domain-Details gelangen Sie zu den DNS-Einstellungen, in denen Einträge angelegt werden.</li>
+</ul>
+<p>Wenn Sie die Option zur DKIM-Aktivierung nicht finden, prüfen Sie zuerst, welches Produkt die Domain tatsächlich bedient. Manche Firmen haben Domain und Postfächer in getrennten Verträgen oder nutzen über IONOS ein Microsoft-365- oder anderes Fremdprodukt. Dann wird DKIM beim jeweiligen Mail-Dienst erzeugt, nicht bei IONOS.</p>
+
+<h2>Schritt 2: DKIM aktivieren und die Einträge notieren</h2>
+<p>Aktivieren Sie DKIM für die gewünschte Domain, sofern Ihr Tarif das vorsieht. Das System zeigt Ihnen dann, welche Einträge nötig sind. Notieren Sie drei Dinge genau:</p>
+<ul>
+<li>den Eintragstyp (CNAME oder TXT),</li>
+<li>den Hostnamen bzw. Namen des Eintrags, der den Selector enthält,</li>
+<li>den Zielwert bzw. Inhalt.</li>
+</ul>
+<p>Kopieren Sie die Werte per Zwischenablage. Der Selector ist der Namensbestandteil vor <em>._domainkey</em>; er sagt dem empfangenden Server, wo der öffentliche Schlüssel zu finden ist.</p>
+
+<h2>Schritt 3a: Einträge im IONOS-DNS anlegen</h2>
+<p>Liegt die Domain mit den IONOS-Nameservern bei IONOS, gehen Sie über Domains &amp; SSL zur Domain und öffnen die DNS-Einstellungen. Dort legen Sie einen neuen Eintrag an:</p>
+<ul>
+<li>Wählen Sie den Typ, den IONOS vorgibt (CNAME oder TXT).</li>
+<li>Tragen Sie im Feld für den Hostnamen nur den Teil ein, der vor Ihrer Domain steht, also zum Beispiel den Selector samt <em>._domainkey</em>. Die Domain selbst ergänzt die Oberfläche meist automatisch.</li>
+<li>Fügen Sie den Zielwert unverändert ein, ohne zusätzliche Anführungszeichen oder Leerzeichen.</li>
+<li>Speichern Sie und prüfen Sie, dass der Eintrag in der Liste erscheint.</li>
+</ul>
+<p>Manchmal setzt IONOS die Einträge bei aktivierter Funktion auch automatisch. Kontrollieren Sie dann nur, ob sie vorhanden sind, und legen Sie keine Doubletten an.</p>
+
+<h2>Schritt 3b: Externes DNS – Einträge übernehmen</h2>
+<p>Verwaltet ein anderer Anbieter oder ein Webdesigner Ihre Nameserver, greifen die Einträge im IONOS-DNS nicht. Sie müssen dieselben Werte beim Betreiber der Nameserver eintragen. Achten Sie dabei auf zwei Fallen:</p>
+<ul>
+<li>Manche DNS-Oberflächen hängen die Domain automatisch an den Hostnamen an. Tragen Sie dann den Namen ohne Domain ein, sonst entsteht ein doppelter Name.</li>
+<li>Lange TXT-Werte werden von einigen Oberflächen in mehrere Teile gesplittet. Das ist zulässig, solange der Inhalt zusammengesetzt unverändert bleibt.</li>
+</ul>
+
+<h2>Schritt 4: Prüfung und Propagationszeit</h2>
+<p>Nach dem Speichern dauert es, bis der neue Eintrag weltweit sichtbar ist. Diese Propagation hängt von Zwischenspeichern im DNS ab und lässt sich nicht genau vorhersagen. Wird die Prüfung in IONOS direkt nach dem Anlegen abgelehnt, ist das deshalb kein sicheres Zeichen für einen Fehler. Warten Sie ab und starten Sie die Prüfung später erneut. Mit einem DKIM-Check können Sie unabhängig kontrollieren, ob der Eintrag öffentlich abrufbar ist. Anschließend senden Sie eine Testmail an ein externes Postfach und sehen sich im Header an, ob dort ein DKIM-Ergebnis mit „pass“ steht.</p>
+
+<h2>Typische Fehler bei IONOS-Domains</h2>
+<h3>Prüfung schlägt fehl</h3>
+<p>Häufige Ursachen sind Tippfehler, versehentlich mitkopierte Leerzeichen, ein doppelt angehängter Domainname im Hostnamen oder ein Eintrag im falschen DNS, weil die Nameserver woanders liegen. Vergleichen Sie den öffentlich abrufbaren Eintrag Zeichen für Zeichen mit den Vorgaben aus dem Kundenkonto.</p>
+<h3>Alter Eintrag und neuer Eintrag kollidieren</h3>
+<p>Wurde früher ein anderer Mailanbieter genutzt, kann ein veralteter DKIM-Eintrag noch existieren. Mehrere Selectors sind grundsätzlich möglich, doch ein gleichnamiger Eintrag mit anderem Inhalt führt zu Konflikten. Entfernen Sie nur Einträge, die Sie sicher keinem aktiven Dienst mehr zuordnen können.</p>
+<h3>Mehrere Absender werden vergessen</h3>
+<p>Newsletter-Tools, Shop-Systeme oder Rechnungsprogramme versenden oft mit Ihrer Domain, ohne über IONOS zu laufen. Diese brauchen eigene DKIM-Einträge ihres Anbieters. Wie das bei einem anderen Anbieter aussieht, zeigt beispielhaft unser Beitrag zu <a href="https://www.email-checken.de/blog/google-workspace-dkim-einrichten-und-konfigurieren-praktischer-leitfad">Google Workspace</a>.</p>
+<h3>DKIM allein reicht nicht</h3>
+<p>DKIM weist die Unversehrtheit und Herkunft einer Nachricht nach. Zusammen mit SPF und DMARC ergibt sich erst ein stimmiges Gesamtbild. Prüfen Sie daher auch diese Einträge Ihrer Domain.</p>
+
+<h2>Fazit</h2>
+<p>Bei IONOS besteht die Arbeit meist nicht im Erzeugen von Schlüsseln, sondern im richtigen Aktivieren und im sauberen Übertragen der angezeigten Einträge ins passende DNS. Prüfen Sie zuerst, wo Ihre Nameserver liegen, geben Sie dem DNS etwas Zeit und kontrollieren Sie das Ergebnis mit einer Testmail. So erkennen Sie Fehler früh und stellen sicher, dass Ihre Mails sauber signiert werden.</p>
+<p style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee"><a href="https://www.email-checken.de/blog">Weitere Artikel &rarr;</a></p>
+<footer style="margin-top:2rem;font-size:0.85rem;color:#666"><a href="https://www.email-checken.de/datenschutz">Datenschutz</a></footer>
+</body>
+</html>

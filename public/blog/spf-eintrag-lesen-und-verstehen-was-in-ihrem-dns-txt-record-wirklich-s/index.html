@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht</title>
+<meta name="description" content="SPF-Eintrag verständlich erklärt: Aufbau, Mechanismen, typische Fehler und Prüfung. So erkennen Sie, ob Ihre Domain E-Mails korrekt autorisiert und geschützt ist.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht">
+<meta property="og:description" content="SPF-Eintrag verständlich erklärt: Aufbau, Mechanismen, typische Fehler und Prüfung. So erkennen Sie, ob Ihre Domain E-Mails korrekt autorisiert und geschützt ist.">
+<meta property="og:url" content="https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s">
+<meta property="og:site_name" content="email-checken.de">
+<meta property="og:image" content="https://video.pan21.com/blog-images/img_6b067b108b9027.58504090.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://video.pan21.com/blog-images/img_6b067b108b9027.58504090.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht","description":"SPF-Eintrag verständlich erklärt: Aufbau, Mechanismen, typische Fehler und Prüfung. So erkennen Sie, ob Ihre Domain E-Mails korrekt autorisiert und geschützt ist.","inLanguage":"de","datePublished":"2026-11-25T06:07:14.317Z","dateModified":"2026-11-25T06:07:14.317Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s"},"url":"https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s","image":"https://video.pan21.com/blog-images/img_6b067b108b9027.58504090.jpg","author":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"},"publisher":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","name":"SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht","itemListElement":[{"@type":"ListItem","position":1,"name":"email-checken.de","item":"https://www.email-checken.de/"},{"@type":"ListItem","position":2,"name":"News","item":"https://www.email-checken.de/blog"},{"@type":"ListItem","position":3,"name":"SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht","item":"https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s"}]}</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+  p { margin: 1rem 0; }
+  a.back { display: inline-block; margin-bottom: 24px; color: #666; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back" href="https://www.email-checken.de/">&larr; Zurück zu email-checken.de</a>
+<h1>SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht</h1>
+<figure style="margin:0 0 1.5rem;"><img src="https://video.pan21.com/blog-images/img_6b067b108b9027.58504090.jpg" alt="SPF-Eintrag lesen und verstehen: Was in Ihrem DNS-TXT-Record wirklich steht" style="width:100%;height:auto;border-radius:8px;" loading="lazy"><figcaption style="font-size:0.78rem;color:#8a9a94;margin-top:0.4rem;">Bild: Pixabay</figcaption></figure>
+<p>Wer eine eigene Domain für E-Mails nutzt, begegnet früher oder später dem Begriff SPF-Eintrag. Meist taucht er auf, wenn Mails im Spam landen oder ein Prüfdienst eine Warnung ausgibt. Dieser Artikel zeigt, wie ein SPF-Eintrag aufgebaut ist, wie Sie ihn Zeichen für Zeichen lesen und welche Fehler in der Praxis häufig vorkommen.</p>
+
+<h2>Was ist ein SPF-Eintrag?</h2>
+<p>SPF steht für Sender Policy Framework. Der SPF-Eintrag ist ein Texteintrag im DNS Ihrer Domain. Er legt fest, welche Server im Namen dieser Domain E-Mails versenden dürfen. Empfangende Mailserver vergleichen die IP-Adresse des einliefernden Servers mit dieser Liste und werten das Ergebnis bei der Entscheidung aus, ob eine Nachricht angenommen, markiert oder abgelehnt wird. Eine ausführliche Einführung finden Sie im Beitrag <a href="https://www.email-checken.de/blog/was-ist-spf-der-wichtigste-schutz-fur-ihre-e-mail-domain">Was ist SPF? Der wichtigste Schutz für Ihre E-Mail-Domain</a>.</p>
+<p>Technisch handelt es sich um einen TXT-Record, der mit <code>v=spf1</code> beginnt. Pro Domain darf es nur einen solchen Eintrag geben. Wichtig: SPF prüft die Absenderadresse im Umschlag der Mail (Envelope-From bzw. Return-Path), nicht zwingend die Adresse, die Empfänger im Mailprogramm als Absender sehen.</p>
+
+<h2>Aufbau eines SPF-Eintrags</h2>
+<p>Ein typisches Beispiel sieht so aus:</p>
+<p><code>v=spf1 mx include:_spf.beispiel-mailanbieter.de ip4:203.0.113.25 -all</code></p>
+<p>Der Eintrag wird von links nach rechts ausgewertet. Die einzelnen Bestandteile:</p>
+<h3>Die Versionsangabe</h3>
+<p><code>v=spf1</code> kennzeichnet den Text als SPF-Eintrag. Fehlt sie oder ist sie falsch geschrieben, wird der Eintrag ignoriert.</p>
+<h3>Mechanismen</h3>
+<ul>
+<li><strong>ip4 / ip6:</strong> erlaubt eine bestimmte IP-Adresse oder einen Adressbereich.</li>
+<li><strong>a:</strong> erlaubt die IP-Adresse, auf die der Domainname per A-Record zeigt.</li>
+<li><strong>mx:</strong> erlaubt die Server, die als Mailserver der Domain eingetragen sind.</li>
+<li><strong>include:</strong> bindet den SPF-Eintrag eines anderen Anbieters ein, etwa eines Newsletter-Dienstes oder Mail-Hosters.</li>
+<li><strong>all:</strong> trifft auf alles zu und steht deshalb am Ende als Auffangregel.</li>
+</ul>
+<h3>Qualifier</h3>
+<p>Vor einem Mechanismus kann ein Zeichen stehen, das die Wirkung bestimmt:</p>
+<ul>
+<li><code>+</code> (Standard): Treffer bedeutet „erlaubt“.</li>
+<li><code>-</code>: Treffer bedeutet „nicht erlaubt“ (Hard Fail).</li>
+<li><code>~</code>: Treffer bedeutet „vermutlich nicht erlaubt“ (Soft Fail).</li>
+<li><code>?</code>: keine Aussage (neutral).</li>
+</ul>
+<p>Das Ende des Eintrags ist besonders aufschlussreich. Ein <code>-all</code> sagt: Alles, was nicht aufgeführt ist, ist nicht berechtigt. Ein <code>~all</code> ist milder und wird häufig in der Einführungsphase verwendet. Ein <code>+all</code> erlaubt jedem den Versand und hebelt den Schutz faktisch aus – das sollten Sie nicht verwenden.</p>
+
+<h2>Typische Fehler im SPF-Eintrag</h2>
+<h3>Mehrere SPF-Einträge</h3>
+<p>Existieren zwei TXT-Records mit <code>v=spf1</code>, führt das zu einem Fehler bei der Auswertung. Wenn ein neuer Dienst hinzukommt, sollten Sie dessen <code>include:</code> in den bestehenden Eintrag einfügen, statt einen zweiten anzulegen.</p>
+<h3>Zu viele DNS-Abfragen</h3>
+<p>Die SPF-Spezifikation begrenzt die Zahl der DNS-Abfragen, die bei der Auswertung nötig sind. Mechanismen wie <code>include</code>, <code>a</code> und <code>mx</code> lösen solche Abfragen aus, und verschachtelte Includes zählen mit. Wird die Grenze überschritten, liefert die Prüfung einen Fehler. Das passiert vor allem, wenn viele externe Dienste eingebunden sind.</p>
+<h3>Vergessene Versender</h3>
+<p>Neben dem eigenen Mailserver versenden oft weitere Systeme Mails mit Ihrer Domain: Newsletter-Tools, Shop-Software, CRM, Ticketsysteme oder Buchhaltungsprogramme. Fehlt einer dieser Dienste im Eintrag, kann es sein, dass dessen Mails als verdächtig gelten.</p>
+<h3>Veraltete Einträge</h3>
+<p>Dienste, die nicht mehr genutzt werden, bleiben gern im Eintrag stehen. Das vergrößert unnötig die Angriffsfläche und die Zahl der Abfragen. Räumen Sie regelmäßig auf.</p>
+<h3>Syntaxfehler</h3>
+<p>Tippfehler, fehlende Leerzeichen, falsche Anführungszeichen oder ein Eintrag, den der DNS-Anbieter in zwei Teile zerlegt, sind häufige Ursachen. Auch ein Eintrag am falschen Namen, etwa einer Subdomain statt der Hauptdomain, zeigt keine Wirkung.</p>
+
+<h2>SPF-Eintrag prüfen: So gehen Sie vor</h2>
+<ol>
+<li>Rufen Sie den TXT-Record Ihrer Domain ab und suchen Sie den Eintrag mit <code>v=spf1</code>.</li>
+<li>Kontrollieren Sie, dass es genau einen solchen Eintrag gibt.</li>
+<li>Gleichen Sie die aufgeführten Mechanismen mit Ihren tatsächlichen Versendern ab.</li>
+<li>Prüfen Sie das Ende (<code>-all</code>, <code>~all</code>) und ob die Wahl zu Ihrer Situation passt.</li>
+<li>Lassen Sie die Auflösung der Includes und die Zahl der Abfragen testen.</li>
+</ol>
+<p>Ein Prüfwerkzeug nimmt Ihnen die Auswertung ab und zeigt Fehler im Klartext an. Wie das im Detail funktioniert, beschreibt der Artikel <a href="https://www.email-checken.de/blog/spf-prufen-so-uberprufen-sie-ihren-spf-eintrag-richtig">SPF prüfen: So überprüfen Sie Ihren SPF-Eintrag richtig</a>. Nach jeder Änderung am DNS sollten Sie erneut testen, da Änderungen erst nach Ablauf der Zwischenspeicherung überall sichtbar werden.</p>
+
+<h2>Grenzen von SPF</h2>
+<p>SPF allein ist kein vollständiger Schutz. Es prüft nur den technischen Absender, nicht den sichtbaren Absendernamen. Bei weitergeleiteten Mails kann SPF fehlschlagen, weil der weiterleitende Server nicht im Eintrag steht. Deshalb wird SPF üblicherweise mit DKIM (digitale Signatur) und DMARC (Richtlinie und Berichte) kombiniert. Erst im Zusammenspiel lässt sich erkennen und steuern, wie mit gefälschten Mails verfahren wird. Zum Thema Missbrauch Ihrer Domain lesen Sie auch <a href="https://www.email-checken.de/blog/spf-record-prufen-ihre-domain-vor-e-mail-spoofing-schutzen">SPF Record prüfen: Ihre Domain vor E-Mail-Spoofing schützen</a>.</p>
+
+<h2>Praktische Hinweise für die Pflege</h2>
+<ul>
+<li>Dokumentieren Sie, welcher Dienst warum im Eintrag steht.</li>
+<li>Beginnen Sie bei Unsicherheit mit <code>~all</code>, beobachten Sie die Ergebnisse und verschärfen Sie erst, wenn alle legitimen Versender erfasst sind.</li>
+<li>Richten Sie auch für Domains, von denen Sie nie Mails senden, einen restriktiven Eintrag ein, etwa <code>v=spf1 -all</code>.</li>
+<li>Prüfen Sie den Eintrag bei jedem Wechsel von Mailanbieter oder Marketing-Tool.</li>
+</ul>
+
+<h2>Fazit</h2>
+<p>Ein SPF-Eintrag ist kurz, hat aber große Wirkung auf die Zustellbarkeit und Glaubwürdigkeit Ihrer E-Mails. Wenn Sie wissen, wie Mechanismen, Qualifier und das abschließende <code>all</code> zusammenspielen, erkennen Sie Fehler schnell. Prüfen Sie Ihren Eintrag regelmäßig und nach jeder Änderung Ihrer Mailinfrastruktur, und ergänzen Sie ihn um DKIM und DMARC.</p>
+<p style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee"><a href="https://www.email-checken.de/blog">Weitere Artikel &rarr;</a></p>
+<footer style="margin-top:2rem;font-size:0.85rem;color:#666"><a href="https://www.email-checken.de/datenschutz">Datenschutz</a></footer>
+</body>
+</html>

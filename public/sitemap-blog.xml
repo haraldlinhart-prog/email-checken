@@ -2,8 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.email-checken.de/blog</loc>
-    <lastmod>2026-11-24</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s</loc>
+    <lastmod>2026-11-25</lastmod>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.email-checken.de/blog/ionos-dkim-einrichten-wo-sie-im-kundenkonto-aktivieren-und-was-bei-den</loc>

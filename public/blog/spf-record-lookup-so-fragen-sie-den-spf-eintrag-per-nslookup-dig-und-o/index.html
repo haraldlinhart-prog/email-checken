@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab</title>
+<meta name="description" content="SPF Record Lookup Schritt für Schritt: SPF-Eintrag mit nslookup, dig und Online-Tools abfragen und die Ausgabe samt include-Kette und DNS-Lookup-Limit auswerten.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.email-checken.de/blog/spf-record-lookup-so-fragen-sie-den-spf-eintrag-per-nslookup-dig-und-o">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab">
+<meta property="og:description" content="SPF Record Lookup Schritt für Schritt: SPF-Eintrag mit nslookup, dig und Online-Tools abfragen und die Ausgabe samt include-Kette und DNS-Lookup-Limit auswerten.">
+<meta property="og:url" content="https://www.email-checken.de/blog/spf-record-lookup-so-fragen-sie-den-spf-eintrag-per-nslookup-dig-und-o">
+<meta property="og:site_name" content="email-checken.de">
+<meta property="og:image" content="https://video.pan21.com/blog-images/img_6b091e185bc0a6.93848239.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://video.pan21.com/blog-images/img_6b091e185bc0a6.93848239.jpg">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab","description":"SPF Record Lookup Schritt für Schritt: SPF-Eintrag mit nslookup, dig und Online-Tools abfragen und die Ausgabe samt include-Kette und DNS-Lookup-Limit auswerten.","inLanguage":"de","datePublished":"2026-11-27T06:07:24.085Z","dateModified":"2026-11-27T06:07:24.085Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.email-checken.de/blog/spf-record-lookup-so-fragen-sie-den-spf-eintrag-per-nslookup-dig-und-o"},"url":"https://www.email-checken.de/blog/spf-record-lookup-so-fragen-sie-den-spf-eintrag-per-nslookup-dig-und-o","image":"https://video.pan21.com/blog-images/img_6b091e185bc0a6.93848239.jpg","author":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"},"publisher":{"@type":"Organization","name":"email-checken.de","url":"https://www.email-checken.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","name":"SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab","itemListElement":[{"@type":"ListItem","position":1,"name":"email-checken.de","item":"https://www.email-checken.de/"},{"@type":"ListItem","position":2,"name":"News","item":"https://www.email-checken.de/blog"},{"@type":"ListItem","position":3,"name":"SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab","item":"https://www.email-checken.de/blog/spf-record-lookup-so-fragen-sie-den-spf-eintrag-per-nslookup-dig-und-o"}]}</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; max-width: 720px; margin: 0 auto; padding: 40px 20px; line-height: 1.7; color: #1a1a1a; }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin-top: 2rem; }
+  h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+  p { margin: 1rem 0; }
+  a.back { display: inline-block; margin-bottom: 24px; color: #666; text-decoration: none; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back" href="https://www.email-checken.de/">&larr; Zurück zu email-checken.de</a>
+<h1>SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab</h1>
+<figure style="margin:0 0 1.5rem;"><img src="https://video.pan21.com/blog-images/img_6b091e185bc0a6.93848239.jpg" alt="SPF Record Lookup: So fragen Sie den SPF-Eintrag per nslookup, dig und Online-Tool ab" style="width:100%;height:auto;border-radius:8px;" loading="lazy"><figcaption style="font-size:0.78rem;color:#8a9a94;margin-top:0.4rem;">Bild: Pixabay</figcaption></figure>
+<p>Ein SPF Record Lookup ist die Abfrage des SPF-Eintrags einer Domain im DNS. Sie brauchen ihn, wenn Mails im Spam landen, wenn Sie einen neuen Versanddienst angebunden haben oder wenn Sie wissen wollen, welche Server für eine fremde Domain senden dürfen. Dieser Artikel zeigt, wie Sie den Eintrag abfragen und wie Sie das Ergebnis richtig lesen. Das Erstellen eines neuen Eintrags behandeln wir hier nicht; dafür gibt es die <a href="https://www.email-checken.de/blog/spf-record-einrichten-praktische-anleitung-fur-e-mail-absender">Anleitung zum Einrichten eines SPF Records</a>.</p>
+
+<h2>Was bei einem SPF Record Lookup eigentlich abgefragt wird</h2>
+<p>SPF ist kein eigener DNS-Typ, sondern ein TXT-Record im Namensraum der Domain, der mit <code>v=spf1</code> beginnt. Ein Lookup fragt also die TXT-Einträge der Domain ab und sucht den passenden heraus. Wichtig: Abgefragt wird die Domain, die im Absender (Envelope-From bzw. Return-Path) steht, nicht automatisch die sichtbare Absenderadresse. Bei Versanddiensten kann das eine andere Domain sein.</p>
+
+<h2>SPF-Eintrag mit nslookup abfragen</h2>
+<p>nslookup ist unter Windows, macOS und Linux meist vorhanden. Der Aufruf in der Eingabeaufforderung oder im Terminal:</p>
+<pre><code>nslookup -type=TXT beispiel.de</code></pre>
+<p>Die Ausgabe listet alle TXT-Einträge der Domain. Neben dem SPF-Eintrag erscheinen oft weitere, etwa Verifizierungscodes von Diensten. Suchen Sie die Zeile, die mit <code>v=spf1</code> beginnt. Möchten Sie einen bestimmten DNS-Server befragen, hängen Sie ihn an:</p>
+<pre><code>nslookup -type=TXT beispiel.de 8.8.8.8</code></pre>
+<p>Das ist nützlich, wenn Sie vermuten, dass Ihr lokaler Resolver noch eine zwischengespeicherte, alte Version liefert.</p>
+
+<h2>SPF-Eintrag mit dig abfragen</h2>
+<p>dig gehört unter Linux und macOS zum Standard und liefert übersichtlichere Ergebnisse:</p>
+<pre><code>dig TXT beispiel.de +short</code></pre>
+<p>Mit <code>+short</code> sehen Sie nur die Werte. Ohne diese Option erhalten Sie zusätzlich die TTL, also die Zeit, wie lange Resolver den Eintrag zwischenspeichern dürfen. Mit <code>@server</code> fragen Sie gezielt einen Nameserver, zum Beispiel den autoritativen Server der Domain, um Cache-Effekte auszuschließen:</p>
+<pre><code>dig TXT beispiel.de @ns1.anbieter.example +short</code></pre>
+<p>Lange Einträge werden von DNS in mehrere Zeichenketten in Anführungszeichen zerlegt. Das ist normal; die Teile gehören zusammen und werden beim Auswerten aneinandergehängt.</p>
+
+<h2>Online-Tools für den SPF Lookup</h2>
+<p>Wenn Sie kein Terminal nutzen möchten, genügt ein Online-Tool: Domain eingeben, Abfrage starten. Gute Werkzeuge zeigen nicht nur den Rohtext, sondern lösen auch include-Verweise auf, zählen die DNS-Lookups und weisen auf Syntaxfehler hin. Das spart Handarbeit, besonders bei verschachtelten Einträgen. Die Kommandozeile bleibt dennoch sinnvoll, wenn Sie einen bestimmten Nameserver befragen oder die Rohdaten sehen wollen. Ergänzend finden Sie Hintergründe zur Absicherung im Beitrag <a href="https://www.email-checken.de/blog/spf-record-prufen-ihre-domain-vor-e-mail-spoofing-schutzen">SPF Record prüfen</a>.</p>
+
+<h2>Die Ausgabe an einem Beispiel auswerten</h2>
+<p>Angenommen, der Lookup liefert diesen (fiktiven) Eintrag:</p>
+<pre><code>v=spf1 ip4:203.0.113.10 include:_spf.mailanbieter.example include:newsletter.example a mx ~all</code></pre>
+<p>Von links nach rechts gelesen bedeutet das:</p>
+<ul>
+<li><strong>v=spf1</strong>: Kennung, dass es sich um einen SPF-Eintrag handelt.</li>
+<li><strong>ip4:203.0.113.10</strong>: Diese IP-Adresse darf senden. Kein zusätzlicher DNS-Lookup nötig.</li>
+<li><strong>include:…</strong>: Der SPF-Eintrag der genannten Domain wird mit hinzugezogen.</li>
+<li><strong>a</strong> und <strong>mx</strong>: Die IP-Adressen der A- bzw. MX-Einträge der Domain sind ebenfalls erlaubt.</li>
+<li><strong>~all</strong>: Alles Übrige ist ein Softfail, also verdächtig, aber nicht klar abgelehnt. <code>-all</code> wäre strenger, <code>?all</code> neutral. Eine ausführliche Erklärung der Bestandteile finden Sie im Beitrag <a href="https://www.email-checken.de/blog/spf-eintrag-lesen-und-verstehen-was-in-ihrem-dns-txt-record-wirklich-s">SPF-Eintrag lesen und verstehen</a>.</li>
+</ul>
+
+<h3>include-Ketten nachverfolgen</h3>
+<p>Fragen Sie nun den Eintrag hinter <code>include:_spf.mailanbieter.example</code> separat ab:</p>
+<pre><code>dig TXT _spf.mailanbieter.example +short</code></pre>
+<p>Dort stehen oft weitere include-Verweise oder Bereichslisten von IP-Adressen. So entsteht eine Kette, die Sie Schritt für Schritt auflösen. Notieren Sie sich bei jedem Schritt, welche Mechanismen DNS-Abfragen auslösen.</p>
+
+<h2>Das Limit von 10 DNS-Lookups</h2>
+<p>Die SPF-Spezifikation (RFC 7208) erlaubt bei der Auswertung höchstens 10 Mechanismen und Modifikatoren, die DNS-Abfragen auslösen. Dazu zählen <code>include</code>, <code>a</code>, <code>mx</code>, <code>ptr</code>, <code>exists</code> und <code>redirect</code>. <code>ip4</code>, <code>ip6</code> und <code>all</code> zählen nicht. Verschachtelte includes zählen mit. Im Beispiel kosten die beiden includes, <code>a</code> und <code>mx</code> bereits vier Lookups, plus alles, was in den includes selbst wieder verweist. Wird das Limit überschritten, liefert die Prüfung ein permerror, und der Empfänger kann SPF als fehlgeschlagen werten. Wenn ein Online-Tool die Lookups zählt, nutzen Sie das; per Hand müssen Sie jede Ebene der Kette einzeln zählen.</p>
+<p>Hilfreich bei Überschreitung: nicht mehr genutzte Dienste entfernen, <code>mx</code> oder <code>a</code> durch feste <code>ip4</code>-Angaben ersetzen, wo diese stabil sind, und prüfen, ob jeder include noch gebraucht wird.</p>
+
+<h2>Typische Fehler, die der Lookup sichtbar macht</h2>
+<h3>Mehrere SPF-Records</h3>
+<p>Eine Domain darf nur einen SPF-Eintrag haben. Zeigt der Lookup zwei TXT-Einträge mit <code>v=spf1</code>, ist das Ergebnis ein permerror. Typisch passiert das, wenn ein Dienst einen neuen Eintrag verlangt und jemand ihn zusätzlich anlegt. Lösung: die Mechanismen in einem Eintrag zusammenführen.</p>
+<h3>Weitere Stolperfallen</h3>
+<ul>
+<li><strong>Fehlendes oder mehrfaches all</strong>: Das <code>all</code> gehört ans Ende; dahinter stehende Mechanismen werden ignoriert.</li>
+<li><strong>Tippfehler</strong> wie <code>v=spf 1</code> oder <code>include</code> ohne Domain.</li>
+<li><strong>Nicht auflösbare includes</strong>: Verweist ein include auf eine Domain ohne SPF-Eintrag, entsteht ebenfalls ein Fehler.</li>
+<li><strong>Veraltete Einträge</strong>: IP-Adressen oder Anbieter, die nicht mehr genutzt werden, vergrößern unnötig die erlaubte Senderschaft.</li>
+<li><strong>Cache</strong>: Nach einer Änderung kann der alte Wert noch eine Weile sichtbar sein. Fragen Sie den autoritativen Nameserver direkt ab.</li>
+<li><strong>Subdomains</strong>: Eine Subdomain, die selbst versendet, benötigt gegebenenfalls einen eigenen Eintrag.</li>
+</ul>
+
+<h2>Eine kurze Checkliste für den Lookup</h2>
+<ul>
+<li>TXT-Records der Domain abfragen und genau einen <code>v=spf1</code>-Eintrag finden.</li>
+<li>Alle includes einzeln auflösen.</li>
+<li>DNS-auslösende Mechanismen zählen und das 10er-Limit im Blick behalten.</li>
+<li>Abschluss mit <code>all</code> und dessen Qualifier prüfen.</li>
+<li>Prüfen, ob alle tatsächlichen Versandquellen enthalten sind.</li>
+</ul>
+
+<h2>Fazit</h2>
+<p>Ein SPF Record Lookup ist mit nslookup, dig oder einem Online-Tool schnell erledigt; der Mehrwert liegt in der Auswertung. Wer include-Ketten auflöst, die DNS-Lookups zählt und auf doppelte Einträge achtet, findet die meisten typischen SPF-Probleme zügig. Wiederholen Sie die Abfrage nach jeder Änderung an Ihrem Mailversand.</p>
+<p style="margin-top:3rem;padding-top:1.5rem;border-top:1px solid #eee"><a href="https://www.email-checken.de/blog">Weitere Artikel &rarr;</a></p>
+<footer style="margin-top:2rem;font-size:0.85rem;color:#666"><a href="https://www.email-checken.de/datenschutz">Datenschutz</a></footer>
+</body>
+</html>
